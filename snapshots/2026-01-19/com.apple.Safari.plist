@@ -1,0 +1,573 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AlwaysRestoreSessionAtLaunch</key>
+	<true/>
+	<key>AutoplayPolicyWhitelistConfigurationUpdateDate</key>
+	<date>2025-11-20T19:07:23Z</date>
+	<key>AutoplayQuirksWhitelistConfigurationUpdateDate</key>
+	<date>2026-01-11T21:23:12Z</date>
+	<key>CachedExtensionOnboardingIconDownloadTime</key>
+	<date>2025-12-19T00:26:01Z</date>
+	<key>CloudTabsOnStartPageConsent</key>
+	<true/>
+	<key>DateOfLastSessionStateDataCleanup</key>
+	<date>2026-01-07T15:40:00Z</date>
+	<key>DefaultBrowserPromptingState3</key>
+	<integer>4</integer>
+	<key>DidClearLegacySpotlightMetadataCaches</key>
+	<true/>
+	<key>DidGrantSearchProviderAccessToWebNavigationExtensions</key>
+	<true/>
+	<key>DidMigrateAppExtensionPermissions</key>
+	<true/>
+	<key>DidMigrateDefaultsToSandboxSecureDefaults</key>
+	<true/>
+	<key>DidMigrateDeviceIdentifier com.apple.Safari.WBSDeviceIdentifierManager.DeviceUtilities</key>
+	<true/>
+	<key>DidMigrateDeviceIdentifier com.apple.Safari.WBSDeviceIdentifierManager.TabGroups</key>
+	<true/>
+	<key>DidMigrateDownloadFolderToSandbox</key>
+	<true/>
+	<key>DidMigrateLastSessionPlist</key>
+	<true/>
+	<key>DidMigrateNewBookmarkSheetToReadingListDefault</key>
+	<true/>
+	<key>DidMigrateResourcesToSandbox</key>
+	<true/>
+	<key>DidMigrateSecureDefaultsToUserDefaults</key>
+	<true/>
+	<key>DidMigrateStartPageDefaultSidebarVisibility</key>
+	<true/>
+	<key>DidMigrateToCoreSpotlightBasedHistorySearch</key>
+	<true/>
+	<key>DidMigrateToMoreRestrictiveFileURLPolicy</key>
+	<true/>
+	<key>DidMigrateWebDriverAllowRemoteAutomation</key>
+	<true/>
+	<key>DidMigrateWebExtensionSQLiteStorageToWebKit</key>
+	<true/>
+	<key>DidRecomputeStartPageAppearanceAfterFixes</key>
+	<true/>
+	<key>DidReportHistorySettings</key>
+	<true/>
+	<key>DidUpdateCoreSpotlightBookmarksDataOnUpgrade</key>
+	<true/>
+	<key>EnableNarrowTabs</key>
+	<true/>
+	<key>ExcludePrivateWindowWhenRestoringSessionAtLaunch</key>
+	<false/>
+	<key>ExtensionsEnabled</key>
+	<true/>
+	<key>ExtensionsToolbarConfiguration BrowserStandaloneTabBarToolbarIdentifier-v3.1</key>
+	<dict>
+		<key>OrderedToolbarItemIdentifiers</key>
+		<array>
+			<string>CombinedSidebarTabGroupToolbarIdentifier</string>
+			<string>SidebarSeparatorToolbarItemIdentifier</string>
+			<string>TabGroupPickerToolbarIdentifier</string>
+			<string>BackForwardToolbarIdentifier</string>
+			<string>NSToolbarFlexibleSpaceItem</string>
+			<string>net.tampermonkey.SafariApp.Extension (G3XV72R5TC) options</string>
+			<string>com.adguard.safari.AdGuard.Extension (TC3Q7MAJXF) Button</string>
+			<string>WebExtension-com.bitwarden.desktop.safari (LTZ2PFU5D6)</string>
+			<string>com.chengyinliu.WhatFontMac.SafariExtension (37DYT3VE83) Button</string>
+			<string>WebExtension-md.obsidian.Obsidian-Web-Clipper.Extension (6JSW4SJWN9)</string>
+			<string>WebExtension-com.keepa.webextension.extension (63N6CG26VL)</string>
+			<string>WebExtension-me.swifter.unscrolled.Extension (FC6QKWA93F)</string>
+			<string>WebExtension-com.1password.safari.extension (2BUA8C4S2C)</string>
+			<string>com.colliderli.iina.OpenInIINA (67CQ77V27R) Button</string>
+			<string>NSToolbarSpaceItem</string>
+			<string>InputFieldsToolbarIdentifier</string>
+			<string>NSToolbarFlexibleSpaceItem</string>
+			<string>ShareToolbarIdentifier</string>
+			<string>NewTabToolbarIdentifier</string>
+			<string>TabPickerToolbarIdentifier</string>
+		</array>
+	</dict>
+	<key>ExtensionsToolbarConfiguration ProfileStandaloneTabBarBrowserToolbarIdentifier-v2-01248BB8-EF90-41EF-A767-832A17883EE5</key>
+	<dict>
+		<key>OrderedToolbarItemIdentifiers</key>
+		<array>
+			<string>CombinedSidebarTabGroupToolbarIdentifier</string>
+			<string>SidebarSeparatorToolbarItemIdentifier</string>
+			<string>TabGroupPickerToolbarIdentifier</string>
+			<string>BackForwardToolbarIdentifier</string>
+			<string>NSToolbarFlexibleSpaceItem</string>
+			<string>com.chengyinliu.WhatFontMac.SafariExtension (37DYT3VE83) Button</string>
+			<string>net.tampermonkey.SafariApp.Extension (G3XV72R5TC) options</string>
+			<string>com.adguard.safari.AdGuard.Extension (TC3Q7MAJXF) Button</string>
+			<string>WebExtension-com.bitwarden.desktop.safari (LTZ2PFU5D6)</string>
+			<string>WebExtension-me.swifter.unscrolled.Extension (FC6QKWA93F)</string>
+			<string>WebExtension-com.1password.safari.extension (2BUA8C4S2C)</string>
+			<string>WebExtension-md.obsidian.Obsidian-Web-Clipper.Extension (6JSW4SJWN9)</string>
+			<string>WebExtension-com.keepa.webextension.extension (63N6CG26VL)</string>
+			<string>NSToolbarSpaceItem</string>
+			<string>InputFieldsToolbarIdentifier</string>
+			<string>NSToolbarFlexibleSpaceItem</string>
+			<string>ShareToolbarIdentifier</string>
+			<string>NewTabToolbarIdentifier</string>
+			<string>TabPickerToolbarIdentifier</string>
+		</array>
+	</dict>
+	<key>FindOnPageMatchesWordStartsOnly</key>
+	<false/>
+	<key>FrequentlyVisitedSitesCache</key>
+	<array/>
+	<key>HideStartPageRecentlyClosedTabsEmptyItemView</key>
+	<true/>
+	<key>HideSuggestionsEmptyItemView</key>
+	<true/>
+	<key>HomePage</key>
+	<string>https://www.apple.com/startpage/</string>
+	<key>IIO_LaunchInfo</key>
+	<real>0.075332999229431152</real>
+	<key>IdentifierOfExtensionWithOverridePageForNewTabs</key>
+	<dict/>
+	<key>IdentifierOfExtensionWithOverridePageForNewWindows</key>
+	<dict/>
+	<key>IncludeDevelopMenu</key>
+	<true/>
+	<key>LastApplicationCacheMessageTraceTime</key>
+	<real>787006977.78932798</real>
+	<key>LastCloudHistoryConfigurationUpdateTime</key>
+	<date>2026-01-13T09:48:32Z</date>
+	<key>LastKnownStartPageAppearance</key>
+	<string>NSAppearanceNameVibrantLight</string>
+	<key>LastKnownStartPageBackgroundImageName</key>
+	<string>2024_06_LANDSCAPE_PINK.heic</string>
+	<key>LastOSVersionSafariWasLaunchedOn</key>
+	<string>26.2</string>
+	<key>LastOpenedSubPaneInWebsitesPrefPane</key>
+	<string>ReaderPreference</string>
+	<key>LastSandboxFileExtensionMaintenanceDate</key>
+	<date>2026-01-07T15:40:00Z</date>
+	<key>LastSharedLinksMessageTraceTime</key>
+	<real>789859686.04439604</real>
+	<key>LocalFileRestrictionsEnabled</key>
+	<true/>
+	<key>NSNavPanelExpandedSizeForOpenMode</key>
+	<string>{928, 448}</string>
+	<key>NSOSPLastRootDirectory</key>
+	<data>
+	Ym9vaygDAAAAAAUQQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+	AAAAAAAAAAAAAAAAAPABAAAEAAAAAwMAAAAEAAAFAAAAAQEAAFVzZXJzAAAABgAAAAEB
+	AABtYXJ0aW4AAAkAAAABAQAARG9jdW1lbnRzAAAACwAAAAEBAAAwMCkgQkFDS1VQUwAQ
+	AAAAAQYAABAAAAAgAAAAMAAAAEQAAAAIAAAABAMAAJZHAAAAAAAACAAAAAQDAACqhwAA
+	AAAAAAgAAAAEAwAAvkEBAAAAAAAIAAAABAMAAAvfnAAAAAAAEAAAAAEGAABwAAAAgAAA
+	AJAAAACgAAAACAAAAAAEAABBx3cG0yPkxhgAAAABAgAAAgAAAAAAAAAfAgAAAAAAAB8C
+	AAAAAAAAAAAAAAEFAAAIAAAABAMAAAIAAAAAAAAABAAAAAMDAAD1AQAACAAAAAEJAABm
+	aWxlOi8vLwwAAAABAQAATWFjaW50b3NoIEhECAAAAAQDAAAAkIKW5wAAAAgAAAAABAAA
+	Qcdo+3QAAAAkAAAAAQEAADE4RDU1MzM5LTAwN0YtNDc4NS1BM0NELUM1NzE4NDU3REJC
+	QRgAAAABAgAAgQAAAAEAAADvEwAAAQAAAO8TAAABAAAAAQAAAAEBAAAvAAAAMAAAAAEC
+	AABkbmliAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAByZGxmAgAAAAAAAADw
+	AAAA/v///wEAAAAAAAAAEwAAAAQQAABYAAAAAAAAAAUQAACwAAAAAAAAABAQAADYAAAA
+	AAAAAEAQAADIAAAAAAAAAAIgAACsAQAAAAAAAAUgAAAcAQAAAAAAABAgAAAsAQAAAAAA
+	ABEgAABgAQAAAAAAABIgAABAAQAAAAAAABMgAABQAQAAAAAAACAgAACMAQAAAAAAADAg
+	AAD4AAAAAAAAAAHAAAAAAQAAAAAAABHAAAAgAAAAAAAAABLAAAAQAQAAAAAAAAHQAAD4
+	AAAAAAAAABDQAAAEAAAAAAAAABfwAABEAAAAAAAAACLwAAC4AQAAAAAAAA==
+	</data>
+	<key>NSPreferencesContentSize</key>
+	<string>{893, 471}</string>
+	<key>NSPreferencesSelectedIndex</key>
+	<integer>0</integer>
+	<key>NSToolbar Configuration BrowserStandaloneTabBarToolbarIdentifier-v3.1</key>
+	<dict>
+		<key>TB Default Item Identifiers</key>
+		<array>
+			<string>CombinedSidebarTabGroupToolbarIdentifier</string>
+			<string>SidebarSeparatorToolbarItemIdentifier</string>
+			<string>TabGroupPickerToolbarIdentifier</string>
+			<string>BackForwardToolbarIdentifier</string>
+			<string>NSToolbarFlexibleSpaceItem</string>
+			<string>com.colliderli.iina.OpenInIINA (67CQ77V27R) Button</string>
+			<string>com.chengyinliu.WhatFontMac.SafariExtension (37DYT3VE83) Button</string>
+			<string>com.adguard.safari.AdGuard.Extension (TC3Q7MAJXF) Button</string>
+			<string>net.tampermonkey.SafariApp.Extension (G3XV72R5TC) options</string>
+			<string>WebExtension-com.bitwarden.desktop.safari (LTZ2PFU5D6)</string>
+			<string>WebExtension-com.keepa.webextension.extension (63N6CG26VL)</string>
+			<string>WebExtension-com.1password.safari.extension (2BUA8C4S2C)</string>
+			<string>WebExtension-com.bitwarden.desktop.safari (LTZ2PFU5D6)</string>
+			<string>WebExtension-md.obsidian.Obsidian-Web-Clipper.Extension (6JSW4SJWN9)</string>
+			<string>WebExtension-me.swifter.unscrolled.Extension (FC6QKWA93F)</string>
+			<string>NSToolbarSpaceItem</string>
+			<string>InputFieldsToolbarIdentifier</string>
+			<string>NSToolbarFlexibleSpaceItem</string>
+			<string>ShareToolbarIdentifier</string>
+			<string>NewTabToolbarIdentifier</string>
+			<string>TabPickerToolbarIdentifier</string>
+		</array>
+		<key>TB Display Mode</key>
+		<integer>2</integer>
+		<key>TB Icon Size Mode</key>
+		<integer>1</integer>
+		<key>TB Is Shown</key>
+		<true/>
+		<key>TB Item Identifiers</key>
+		<array>
+			<string>CombinedSidebarTabGroupToolbarIdentifier</string>
+			<string>SidebarSeparatorToolbarItemIdentifier</string>
+			<string>TabGroupPickerToolbarIdentifier</string>
+			<string>BackForwardToolbarIdentifier</string>
+			<string>NSToolbarFlexibleSpaceItem</string>
+			<string>net.tampermonkey.SafariApp.Extension (G3XV72R5TC) options</string>
+			<string>WebExtension-com.bitwarden.desktop.safari (LTZ2PFU5D6)</string>
+			<string>com.chengyinliu.WhatFontMac.SafariExtension (37DYT3VE83) Button</string>
+			<string>WebExtension-md.obsidian.Obsidian-Web-Clipper.Extension (6JSW4SJWN9)</string>
+			<string>WebExtension-com.keepa.webextension.extension (63N6CG26VL)</string>
+			<string>WebExtension-me.swifter.unscrolled.Extension (FC6QKWA93F)</string>
+			<string>WebExtension-com.1password.safari.extension (2BUA8C4S2C)</string>
+			<string>com.colliderli.iina.OpenInIINA (67CQ77V27R) Button</string>
+			<string>NSToolbarSpaceItem</string>
+			<string>InputFieldsToolbarIdentifier</string>
+			<string>NSToolbarFlexibleSpaceItem</string>
+			<string>ShareToolbarIdentifier</string>
+			<string>NewTabToolbarIdentifier</string>
+			<string>TabPickerToolbarIdentifier</string>
+		</array>
+		<key>TB Size Mode</key>
+		<integer>1</integer>
+	</dict>
+	<key>NSToolbar Configuration ProfileStandaloneTabBarBrowserToolbarIdentifier-v2-01248BB8-EF90-41EF-A767-832A17883EE5</key>
+	<dict>
+		<key>TB Default Item Identifiers</key>
+		<array>
+			<string>CombinedSidebarTabGroupToolbarIdentifier</string>
+			<string>SidebarSeparatorToolbarItemIdentifier</string>
+			<string>TabGroupPickerToolbarIdentifier</string>
+			<string>BackForwardToolbarIdentifier</string>
+			<string>NSToolbarFlexibleSpaceItem</string>
+			<string>com.chengyinliu.WhatFontMac.SafariExtension (37DYT3VE83) Button</string>
+			<string>net.tampermonkey.SafariApp.Extension (G3XV72R5TC) options</string>
+			<string>WebExtension-me.swifter.unscrolled.Extension (FC6QKWA93F)</string>
+			<string>WebExtension-com.1password.safari.extension (2BUA8C4S2C)</string>
+			<string>WebExtension-md.obsidian.Obsidian-Web-Clipper.Extension (6JSW4SJWN9)</string>
+			<string>WebExtension-com.keepa.webextension.extension (63N6CG26VL)</string>
+			<string>NSToolbarSpaceItem</string>
+			<string>InputFieldsToolbarIdentifier</string>
+			<string>NSToolbarFlexibleSpaceItem</string>
+			<string>ShareToolbarIdentifier</string>
+			<string>NewTabToolbarIdentifier</string>
+			<string>TabPickerToolbarIdentifier</string>
+		</array>
+		<key>TB Display Mode</key>
+		<integer>2</integer>
+		<key>TB Icon Size Mode</key>
+		<integer>1</integer>
+		<key>TB Is Shown</key>
+		<true/>
+		<key>TB Item Identifiers</key>
+		<array>
+			<string>CombinedSidebarTabGroupToolbarIdentifier</string>
+			<string>SidebarSeparatorToolbarItemIdentifier</string>
+			<string>TabGroupPickerToolbarIdentifier</string>
+			<string>BackForwardToolbarIdentifier</string>
+			<string>NSToolbarFlexibleSpaceItem</string>
+			<string>net.tampermonkey.SafariApp.Extension (G3XV72R5TC) options</string>
+			<string>WebExtension-me.swifter.unscrolled.Extension (FC6QKWA93F)</string>
+			<string>WebExtension-com.1password.safari.extension (2BUA8C4S2C)</string>
+			<string>WebExtension-md.obsidian.Obsidian-Web-Clipper.Extension (6JSW4SJWN9)</string>
+			<string>WebExtension-com.keepa.webextension.extension (63N6CG26VL)</string>
+			<string>NSToolbarSpaceItem</string>
+			<string>InputFieldsToolbarIdentifier</string>
+			<string>NSToolbarFlexibleSpaceItem</string>
+			<string>ShareToolbarIdentifier</string>
+			<string>NewTabToolbarIdentifier</string>
+			<string>TabPickerToolbarIdentifier</string>
+		</array>
+		<key>TB Size Mode</key>
+		<integer>1</integer>
+	</dict>
+	<key>NSWindow Frame BrowserWindowFrame</key>
+	<string>0 58 1496 880 0 0 1496 938 </string>
+	<key>NSWindow Frame NSSpellCheckerSpellingPanel</key>
+	<string>496 454 431 289 0 0 1728 1083 </string>
+	<key>NSWindow Frame NSSpellCheckerSubstitutionsPanel2</key>
+	<string>569 336 395 150 0 0 1496 938 </string>
+	<key>NSWindow Frame Preferences</key>
+	<string>554 303 893 503 0 0 1728 1084 </string>
+	<key>NewTabBehavior</key>
+	<integer>1</integer>
+	<key>NewTabPageLastModified</key>
+	<date>2025-12-23T22:21:01Z</date>
+	<key>NewTabPageSetByUserGesture</key>
+	<true/>
+	<key>NewWindowBehavior</key>
+	<integer>1</integer>
+	<key>NewestLaunchedSafariVersion</key>
+	<string>623.1.14.11.9</string>
+	<key>OpenPrivateWindowWhenNotRestoringSessionAtLaunch</key>
+	<false/>
+	<key>OpenWindows</key>
+	<array/>
+	<key>PreferencesModulesMinimumWidths</key>
+	<dict>
+		<key>CFBundleVersion</key>
+		<string>21623.1.14.11.9</string>
+		<key>DeveloperMenuVisibility</key>
+		<false/>
+		<key>Locale</key>
+		<string>sk_DE</string>
+		<key>MinimumWidths</key>
+		<dict>
+			<key>AdvancedPreferences</key>
+			<real>893</real>
+			<key>AutoFillPreferences</key>
+			<real>893</real>
+			<key>ExtensionsPreferences</key>
+			<real>893</real>
+			<key>GeneralPreferences</key>
+			<real>893</real>
+			<key>PasswordsPreferences</key>
+			<real>893</real>
+			<key>PrivacyPreferences</key>
+			<real>893</real>
+			<key>ProfilesPreferences</key>
+			<real>893</real>
+			<key>SearchPreferences</key>
+			<real>893</real>
+			<key>SecurityPreferences</key>
+			<real>893</real>
+			<key>TabsPreferences</key>
+			<real>893</real>
+			<key>WebsitesPreferences</key>
+			<real>893</real>
+		</dict>
+	</dict>
+	<key>PrivacyReportStartPageData</key>
+	<dict>
+		<key>DefaultProfile</key>
+		<dict>
+			<key>mostSeenKnownTrackerDomain</key>
+			<string>google.com</string>
+			<key>numberOfFirstParties</key>
+			<integer>5</integer>
+			<key>numberOfTrackers</key>
+			<integer>5</integer>
+			<key>ratioOfTrackedFirstPartiesToAllVisited</key>
+			<real>0.26829268292682928</real>
+		</dict>
+	</dict>
+	<key>PrivacyReportStartPageNumberOfTrackers</key>
+	<dict>
+		<key>DefaultProfile</key>
+		<integer>5</integer>
+	</dict>
+	<key>PrivateBrowsingRequiresAuthentication</key>
+	<true/>
+	<key>PrivateSearchEngineUsesNormalSearchEngineToggle</key>
+	<true/>
+	<key>RecentWebSearches</key>
+	<array/>
+	<key>ReportSafariTabState</key>
+	<dict>
+		<key>alwaysRestoreSessionSetting</key>
+		<true/>
+		<key>appleEventSaysPreserveState</key>
+		<false/>
+		<key>date</key>
+		<string>2026-01-13 10:48:32 +0100</string>
+		<key>excludePrivateWindowsSetting</key>
+		<false/>
+		<key>normalWindowStates</key>
+		<dict>
+			<key>D8B0C94B-0D21-4113-85BC-0EF6E965DC29</key>
+			<integer>1</integer>
+		</dict>
+		<key>privateWindowStates</key>
+		<dict/>
+		<key>systemRestoresWindows</key>
+		<false/>
+		<key>systemTALSetting</key>
+		<false/>
+	</dict>
+	<key>SafariProfilesLastActiveProfileUUIDString</key>
+	<string>DefaultProfile</string>
+	<key>SafariVersionForExperimentalFeatures</key>
+	<string>26.2</string>
+	<key>SearchProviderIdentifierMigratedToSystemPreference</key>
+	<true/>
+	<key>SearchProviderShortName</key>
+	<string>DuckDuckGo</string>
+	<key>ShowBackgroundImageInFavorites</key>
+	<false/>
+	<key>ShowFullURLInSmartSearchField</key>
+	<true/>
+	<key>ShowOverlayStatusBar</key>
+	<true/>
+	<key>ShowSidebarInNewWindows</key>
+	<false/>
+	<key>ShowSidebarInTopSites</key>
+	<false/>
+	<key>SkipLoadingEnabledAppExtensionsAtLaunch</key>
+	<false/>
+	<key>SkipLoadingEnabledContentBlockersAtLaunch</key>
+	<true/>
+	<key>SkipLoadingEnabledWebExtensionsAtLaunch</key>
+	<false/>
+	<key>StartPagePopoverUsesDefaultBackground</key>
+	<true/>
+	<key>StartPageSections</key>
+	<data>
+	YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMS
+	AAGGoF8QD05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGvEBgLDBshIiktLjIzNzg8PUFC
+	RkdLTFBRVVZVJG51bGzSDQ4PGlpOUy5vYmplY3RzViRjbGFzc6oQERITFBUWFxgZgAKA
+	BYAHgAmAC4ANgA+AEYATgBWAF9McHQ4eHyBaSWRlbnRpZmllcllJc0VuYWJsZWSAAwmA
+	BF8QFWV4cGxvcmVJdGVtSWRlbnRpZmllctIjJCUmWiRjbGFzc25hbWVYJGNsYXNzZXNf
+	EB1XQlNTdGFydFBhZ2VTZWN0aW9uRGVzY3JpcHRvcqInKF8QHVdCU1N0YXJ0UGFnZVNl
+	Y3Rpb25EZXNjcmlwdG9yWE5TT2JqZWN00xwdDiofIIAGCYAEXxAfdGFiR3JvdXBGYXZv
+	cml0ZXNJdGVtSWRlbnRpZmllctMcHQ4vHyCACAmABF8QKnJlY2VudGx5Q2xvc2VkVGFi
+	c0luVGFiR3JvdXBJdGVtSWRlbnRpZmllctMcHQ40HyCACgmABF8QF2Zhdm9yaXRlc0l0
+	ZW1JZGVudGlmaWVy0xwdDjkfIIAMCYAEXxAfZnJlcXVlbnRseVZpc2l0ZWRJdGVtSWRl
+	bnRpZmllctMcHQ4+HyCADgmABF8QGGhpZ2hsaWdodHNJdGVtSWRlbnRpZmllctMcHQ5D
+	RCCAEAiABF8QF3ByaXZhY3lSZXBvcnRJZGVudGlmaWVy0xwdDkhEIIASCIAEXxAZcmVh
+	ZGluZ0xpc3RJdGVtSWRlbnRpZmllctMcHQ5NHyCAFAmABF8QF2Nsb3VkVGFic0l0ZW1J
+	ZGVudGlmaWVy0xwdDlIfIIAWCYAEXxAZc3VnZ2VzdGlvbnNJdGVtSWRlbnRpZmllctIj
+	JFdYXk5TTXV0YWJsZUFycmF5o1dZKFdOU0FycmF5AAgAEQAaACQAKQAyADcASQBMAFEA
+	UwBuAHQAeQCEAIsAlgCYAJoAnACeAKAAogCkAKYAqACqAKwAswC+AMgAygDLAM0A5QDq
+	APUA/gEeASEBQQFKAVEBUwFUAVYBeAF/AYEBggGEAbEBuAG6AbsBvQHXAd4B4AHhAeMC
+	BQIMAg4CDwIRAiwCMwI1AjYCOAJSAlkCWwJcAl4CegKBAoMChAKGAqACpwKpAqoCrALI
+	As0C3ALgAAAAAAAAAgEAAAAAAAAAWgAAAAAAAAAAAAAAAAAAAug=
+	</data>
+	<key>SuccessfulLaunchTimestamp</key>
+	<real>789990510.08077395</real>
+	<key>UniversalSearchFeatureNotificationHasBeenDisplayed</key>
+	<true/>
+	<key>UserAgentQuirksConfigurationUpdateDate</key>
+	<date>2026-01-11T21:23:12Z</date>
+	<key>UserStyleSheetEnabled</key>
+	<false/>
+	<key>WBSCloudKitStartPageSectionOrder</key>
+	<array>
+		<string>exploreItemIdentifier</string>
+		<string>tabGroupFavoritesItemIdentifier</string>
+		<string>recentlyClosedTabsInTabGroupItemIdentifier</string>
+		<string>favoritesItemIdentifier</string>
+		<string>frequentlyVisitedItemIdentifier</string>
+		<string>highlightsItemIdentifier</string>
+		<string>privacyReportIdentifier</string>
+		<string>readingListItemIdentifier</string>
+		<string>cloudTabsItemIdentifier</string>
+		<string>suggestionsItemIdentifier</string>
+	</array>
+	<key>WBSDateOfLastPruningOfInactiveCloudExtensionDevices</key>
+	<date>2026-01-11T11:14:02Z</date>
+	<key>WBSDateOfLastSaveOfCurrentCloudExtensionDevice</key>
+	<date>2026-01-11T21:23:10Z</date>
+	<key>WBSOfflineSearchDisablementKey</key>
+	<date>2026-01-13T09:48:31Z</date>
+	<key>WBSOfflineSearchSuggestionsModelGoogleWasDefaultSearchEngineKey</key>
+	<false/>
+	<key>WBSOfflineSearchSuggestionsModelLastUsedLocaleIdentifierKey</key>
+	<string>sk_DE</string>
+	<key>WBSOnboardingStatesDefaultsKeyV0.2</key>
+	<dict>
+		<key>CustomizeStartPage</key>
+		<integer>4</integer>
+		<key>EnableCloudSync</key>
+		<integer>4</integer>
+		<key>EnableHighlights</key>
+		<integer>2</integer>
+		<key>ExtensionsDiscovery</key>
+		<integer>4</integer>
+		<key>SetDefaultBrowser</key>
+		<integer>3</integer>
+	</dict>
+	<key>WBSPasswordWarningTopFraudTargetsLastUpdate</key>
+	<date>2025-12-25T22:24:53Z</date>
+	<key>WBSPerSiteSettingSyncInitialSyncCompletedKey</key>
+	<true/>
+	<key>WBSPeriodicSyncSuccessesCount</key>
+	<integer>9</integer>
+	<key>WBSPrivacyProxyAvailabilityAccountType</key>
+	<integer>2</integer>
+	<key>WBSPrivacyProxyAvailabilityActiveOnDefaultNetwork</key>
+	<true/>
+	<key>WBSPrivacyProxyAvailabilityServiceStatus</key>
+	<integer>0</integer>
+	<key>WBSPrivacyProxyAvailabilitySubscriberTier</key>
+	<false/>
+	<key>WBSPrivacyProxyAvailabilitySubscriberTierUnavailableInUserCountry</key>
+	<false/>
+	<key>WBSPrivacyProxyAvailabilityTraffic</key>
+	<integer>134085868</integer>
+	<key>WBSProfilesWithSpecifiedStartPageBackgroundImage</key>
+	<array>
+		<string>37EEED9F-965B-4A30-84F9-9CDDAE2F7608</string>
+	</array>
+	<key>WBSRemoteAutoFillQuirksLastUpdateTime</key>
+	<date>2026-01-13T09:48:31Z</date>
+	<key>WBSStartPageOnboardingResumeDate</key>
+	<date>2025-12-26T14:18:51Z</date>
+	<key>WBSTabGroupsWithSpecifiedStartPageBackgroundImage</key>
+	<array>
+		<string>B1939A99-7E01-4FA6-829B-DC6422763057</string>
+	</array>
+	<key>WebKitDeveloperExtrasEnabledPreferenceKey</key>
+	<true/>
+	<key>WebKitPreferences.allowsPictureInPictureMediaPlayback</key>
+	<true/>
+	<key>WebKitPreferences.applePayEnabled</key>
+	<true/>
+	<key>WebKitPreferences.hiddenPageDOMTimerThrottlingAutoIncreases</key>
+	<true/>
+	<key>WebKitPreferences.invisibleMediaAutoplayNotPermitted</key>
+	<true/>
+	<key>WebKitPreferences.javaScriptCanOpenWindowsAutomatically</key>
+	<true/>
+	<key>WebKitPreferences.needsStorageAccessFromFileURLsQuirk</key>
+	<false/>
+	<key>WebKitPreferences.pushAPIEnabled</key>
+	<true/>
+	<key>WebKitPreferences.shouldSuppressKeyboardInputDuringProvisionalNavigation</key>
+	<true/>
+	<key>WebKitRespectStandardStyleKeyEquivalents</key>
+	<true/>
+	<key>WebsiteNameProviderLastUpdateTime</key>
+	<date>2026-01-13T09:48:31Z</date>
+	<key>com.apple.MobileAsset.SafariBackgroundImage.UpdateDate</key>
+	<date>2025-12-31T21:51:40Z</date>
+	<key>com.apple.WebPrivacy.ResourceMonitorURLsVersion</key>
+	<string>qrsAAAGXnXBrwGxMO6s=</string>
+	<key>com.apple.WebPrivacy.TrackingResourceRequestContentBlockerVersion</key>
+	<string>qrsAAAGSKksiIAhvTDg=</string>
+	<key>customizationSyncServerToken</key>
+	<data>
+	YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMS
+	AAGGoF8QD05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGkCwwRElUkbnVsbNINDg8QViRj
+	bGFzc18QD0NoYW5nZVRva2VuRGF0YYADgAJPEDAfChASDAABD1lgpDZ9AAIAABgBGAAi
+	FQi1mP3gs6S9qW0Q8PLVx5LCxIyWASgASADSExQVFlokY2xhc3NuYW1lWCRjbGFzc2Vz
+	XxATQ0tTZXJ2ZXJDaGFuZ2VUb2tlbqIVF1hOU09iamVjdAgRGiQpMjdJTFFTWF5janx+
+	gLO4w8zi5QAAAAAAAAEBAAAAAAAAABgAAAAAAAAAAAAAAAAAAADu
+	</data>
+	<key>familySharingTipAcknowledgementDate</key>
+	<date>2025-12-20T09:55:37Z</date>
+	<key>generalSharingTipAcknowledgementDate</key>
+	<date>2025-12-20T09:55:37Z</date>
+	<key>kAOSUIProfilePictureCropRect</key>
+	<string>{{0, 0}, {0, 0}}</string>
+	<key>lastPasswordWarningManagerUpdate</key>
+	<date>2026-01-19T10:10:51Z</date>
+	<key>lastPasswordWarningManagerUpdateHasNewWarnings</key>
+	<true/>
+	<key>lastPasswordWarningManagerUpdateHashes</key>
+	<array>
+		<integer>1131307849350679434</integer>
+		<integer>1131307849350679433</integer>
+		<integer>11796519372043714898</integer>
+		<integer>4953471784901575603</integer>
+		<integer>9698866048056884210</integer>
+		<integer>12062881908122073179</integer>
+		<integer>7673935912216018348</integer>
+	</array>
+	<key>lastRecentlyDeletedNotificationDateDictionary</key>
+	<dict/>
+	<key>menuBarTipAcknowledgementData</key>
+	<date>2025-12-21T01:04:54Z</date>
+	<key>settingsSyncAccountDSIDHash</key>
+	<data>
+	rvvFzKxWsK1kyAbMCiTNwVP6DMU=
+	</data>
+</dict>
+</plist>

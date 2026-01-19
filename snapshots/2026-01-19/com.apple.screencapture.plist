@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>disable-shadow</key>
+	<true/>
+	<key>last-analytics-stamp</key>
+	<real>790196201.16561604</real>
+	<key>last-selection</key>
+	<dict>
+		<key>Height</key>
+		<real>802.375</real>
+		<key>Width</key>
+		<real>287</real>
+		<key>X</key>
+		<real>1176</real>
+		<key>Y</key>
+		<real>81.625</real>
+	</dict>
+	<key>last-selection-display</key>
+	<integer>0</integer>
+	<key>location</key>
+	<string>/Users/martin/Screenshots</string>
+	<key>location-last</key>
+	<string>~/Documents/00) SCHOOL/01) Umschulung/01) UNTERICHT/LF 7 -  Cyber Physical System/Projekt "Raum Luft"/temp/pintscreens</string>
+	<key>style</key>
+	<string>selection</string>
+	<key>target</key>
+	<string>clipboard</string>
+	<key>type</key>
+	<string>png</string>
+	<key>video</key>
+	<false/>
+</dict>
+</plist>
