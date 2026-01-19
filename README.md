@@ -1,4 +1,11 @@
-# macOS clean setup
+
+```
+git clone https://github.com/<tvoj_user>/Initial-macOS-Setup.git
+cd "Initial-macOS-Setup"
+./bootstrap.sh
+```
+
+# macOS Initial clean setup
 
 Customise macOS defaults and install software automatically.  
 
@@ -7,7 +14,6 @@ Customise macOS defaults and install software automatically.
 Open macOS Terminal and run the following command
 
 ```bash
-
 bash <(curl -s https://gist.githubusercontent.com/mmtka/5e547eadcf7a79dc80aa77e1d1ddbd54/raw/6e7c10b87f458063aefe701a5a628edf82e36b2d/install.sh)
 ```
 
