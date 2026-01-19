@@ -2,20 +2,35 @@
 
 Opinionated, reproducible macOS bootstrap for power users.
 
-This repository automates the initial setup of a clean macOS system:
-- system preferences (defaults)
-- software installation (Homebrew + Brewfile)
+One command installs:
+- Homebrew + software (Brewfile)
+- macOS system defaults
 - Dock layout
-- shell initialization (zsh)
+- zsh configuration
 - Apple Silicon specifics (Rosetta)
 
-The goal is **one command**, minimal manual work, and a system that can be rebuilt at any time.
+Designed to rebuild a clean macOS system quickly and predictably.
 
----
-
-## Quick start (recommended)
+## Quick start
 
 ```bash
 git clone https://github.com/mmtka/Initial-macOS-setup.git
 cd Initial-macOS-setup
 ./bootstrap.sh
+```
+
+## What will prompt you
+
+- macOS user password (sudo) – yes
+- Mac App Store login – yes (guided by script)
+- iCloud credentials – never
+
+## Documentation
+
+- INSTALL.md – installation & one‑liner
+- USAGE.md – running individual parts
+- STRUCTURE.md – repository layout
+- FAQ.md – design decisions
+
+This is not an MDM replacement.
+Scripts are the source of truth.
