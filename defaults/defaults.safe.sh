@@ -1,6 +1,11 @@
-cat > defaults/defaults.safe.sh <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
+
+# Load configuration
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
+if [[ -f "${REPO_DIR}/config.sh" ]]; then
+  source "${REPO_DIR}/config.sh"
+fi
 
 # Close System Settings to avoid overrides
 osascript -e 'tell application "System Settings" to quit' >/dev/null 2>&1 || true
@@ -23,11 +28,21 @@ defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
 defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
 defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 
-# Language/locale
-defaults write NSGlobalDomain AppleLanguages -array "sk" "en" "cs" "de"
-defaults write NSGlobalDomain AppleLocale -string "de_DE@currency=EUR"
-defaults write NSGlobalDomain AppleMeasurementUnits -string "Centimeters"
-defaults write NSGlobalDomain AppleMetricUnits -bool true
+# Language/locale (from config.sh)
+LANGUAGES_ARRAY=()
+for lang in "${LANGUAGES[@]}"; do
+  LANGUAGES_ARRAY+=("$lang")
+done
+defaults write NSGlobalDomain AppleLanguages -array "${LANGUAGES_ARRAY[@]}"
+defaults write NSGlobalDomain AppleLocale -string "${LOCALE}@currency=${CURRENCY}"
+
+if [[ "${USE_METRIC}" == "true" ]]; then
+  defaults write NSGlobalDomain AppleMeasurementUnits -string "${MEASUREMENT_UNITS}"
+  defaults write NSGlobalDomain AppleMetricUnits -bool true
+else
+  defaults write NSGlobalDomain AppleMeasurementUnits -string "Inches"
+  defaults write NSGlobalDomain AppleMetricUnits -bool false
+fi
 
 # Expand save/print panels
 defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
@@ -59,18 +74,27 @@ defaults write NSGlobalDomain com.apple.swipescrolldirection -bool false
 ###############################################################################
 # SCREENSHOTS
 ###############################################################################
-mkdir -p "${HOME}/Screenshots"
-defaults write com.apple.screencapture location -string "${HOME}/Screenshots"
-defaults write com.apple.screencapture type -string "png"
+mkdir -p "${SCREENSHOT_DIR}"
+defaults write com.apple.screencapture location -string "${SCREENSHOT_DIR}"
+defaults write com.apple.screencapture type -string "${SCREENSHOT_FORMAT}"
 defaults write com.apple.screencapture disable-shadow -bool true
 
 ###############################################################################
 # FINDER
 ###############################################################################
 
-# Hidden files + extensions
-defaults write com.apple.finder AppleShowAllFiles -bool true
-defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+# Hidden files + extensions (from config.sh)
+if [[ "${FINDER_SHOW_HIDDEN}" == "true" ]]; then
+  defaults write com.apple.finder AppleShowAllFiles -bool true
+else
+  defaults write com.apple.finder AppleShowAllFiles -bool false
+fi
+
+if [[ "${FINDER_SHOW_EXTENSIONS}" == "true" ]]; then
+  defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+else
+  defaults write NSGlobalDomain AppleShowAllExtensions -bool false
+fi
 
 # Disable extension change warning
 defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
@@ -87,7 +111,7 @@ defaults write com.apple.finder ShowStatusBar -bool true
 defaults write com.apple.finder ShowPathbar -bool true
 defaults write com.apple.finder _FXSortFoldersFirst -bool true
 defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
-defaults write com.apple.finder FXPreferredViewStyle -string "clmv"
+defaults write com.apple.finder FXPreferredViewStyle -string "${FINDER_VIEW_STYLE}"
 
 # Prevent .DS_Store on network/USB
 defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
@@ -108,9 +132,15 @@ chflags nohidden "${HOME}/Library" 2>/dev/null || true
 ###############################################################################
 # DOCK / SPACES / HOT CORNERS
 ###############################################################################
-defaults write com.apple.dock tilesize -int 32
+defaults write com.apple.dock tilesize -int "${DOCK_TILE_SIZE}"
 defaults write com.apple.dock minimize-to-application -bool true
-defaults write com.apple.dock show-recents -bool false
+
+if [[ "${DOCK_SHOW_RECENTS}" == "true" ]]; then
+  defaults write com.apple.dock show-recents -bool true
+else
+  defaults write com.apple.dock show-recents -bool false
+fi
+
 defaults write com.apple.dock mru-spaces -bool false
 
 # Hot Corners:
@@ -139,6 +169,3 @@ defaults write com.apple.ActivityMonitor OpenMainWindow -bool true
 # TIME MACHINE
 ###############################################################################
 defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
-EOF
-
-chmod +x defaults/defaults.safe.sh
