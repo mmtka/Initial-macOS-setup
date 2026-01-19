@@ -4,12 +4,28 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BREWFILE="${REPO_DIR}/Brewfile"
 
+# Load configuration
+if [[ -f "${REPO_DIR}/config.sh" ]]; then
+  source "${REPO_DIR}/config.sh"
+else
+  echo "⚠ config.sh not found, using defaults"
+  CREATE_BACKUP=true
+  ENABLE_POWER_DEFAULTS=true
+  ENABLE_DOCK_LAYOUT=true
+  AUTO_CLEANUP_BREW=true
+fi
+
 # Logging
 LOG_FILE="${HOME}/bootstrap-$(date +%Y%m%d-%H%M%S).log"
 exec > >(tee -a "${LOG_FILE}") 2>&1
 
 echo "==> Bootstrap log: ${LOG_FILE}"
 echo
+
+# Load backup library if available
+if [[ -f "${REPO_DIR}/lib/backup.sh" ]]; then
+  source "${REPO_DIR}/lib/backup.sh"
+fi
 
 echo "==> 0) Rosetta (Apple Silicon only)"
 ARCH="$(uname -m)"
@@ -129,7 +145,15 @@ ZR_ADD
 fi
 
 echo
-echo "==> 4) MAS (Mac App Store) login check"
+echo "==> 4) Backup current system settings"
+if command -v create_backup >/dev/null 2>&1; then
+  create_backup
+else
+  echo "ℹ Backup function not available, skipping"
+fi
+
+echo
+echo "==> 5) MAS (Mac App Store) login check"
 
 # Ensure mas is available early
 if ! command -v mas >/dev/null 2>&1; then
@@ -151,7 +175,7 @@ else
 fi
 
 echo
-echo "==> 5) Install from Brewfile (brew bundle)"
+echo "==> 6) Install from Brewfile (brew bundle)"
 brew update
 brew bundle --file "${BREWFILE}" --no-lock
 
@@ -160,32 +184,49 @@ if [[ "${MAS_READY}" == "0" ]]; then
   echo "⚠ MAS apps were skipped (not logged into App Store)"
 fi
 
+# Auto-cleanup orphaned packages
+if [[ "${AUTO_CLEANUP_BREW:-true}" == "true" ]]; then
+  echo
+  echo "==> 7) Cleanup orphaned Homebrew packages"
+  brew bundle cleanup --file "${BREWFILE}" --force || echo "⚠ Cleanup failed (non-critical)"
+fi
+
 echo
-echo "==> 6) macOS defaults (safe)"
+echo "==> 8) macOS defaults (safe)"
 if [[ -f "${REPO_DIR}/defaults/defaults.safe.sh" ]]; then
   bash "${REPO_DIR}/defaults/defaults.safe.sh"
 else
   echo "⚠ defaults.safe.sh not found, skipping"
 fi
 
-echo
-echo "==> 7) macOS defaults (power) - requires sudo"
-if [[ -f "${REPO_DIR}/defaults/defaults.power.sh" ]]; then
-  bash "${REPO_DIR}/defaults/defaults.power.sh"
+if [[ "${ENABLE_POWER_DEFAULTS:-true}" == "true" ]]; then
+  echo
+  echo "==> 9) macOS defaults (power) - requires sudo"
+  if [[ -f "${REPO_DIR}/defaults/defaults.power.sh" ]]; then
+    bash "${REPO_DIR}/defaults/defaults.power.sh"
+  else
+    echo "⚠ defaults.power.sh not found, skipping"
+  fi
 else
-  echo "⚠ defaults.power.sh not found, skipping"
+  echo
+  echo "ℹ Power defaults disabled in config.sh"
+fi
+
+if [[ "${ENABLE_DOCK_LAYOUT:-true}" == "true" ]]; then
+  echo
+  echo "==> 10) Dock layout (dockutil) - best effort"
+  if [[ -f "${REPO_DIR}/dock/layout.sh" ]]; then
+    bash "${REPO_DIR}/dock/layout.sh" || echo "⚠ Dock layout failed (non-critical)"
+  else
+    echo "⚠ dock/layout.sh not found, skipping"
+  fi
+else
+  echo
+  echo "ℹ Dock layout disabled in config.sh"
 fi
 
 echo
-echo "==> 8) Dock layout (dockutil) - best effort"
-if [[ -f "${REPO_DIR}/dock/layout.sh" ]]; then
-  bash "${REPO_DIR}/dock/layout.sh" || echo "⚠ Dock layout failed (non-critical)"
-else
-  echo "⚠ dock/layout.sh not found, skipping"
-fi
-
-echo
-echo "==> 9) Apply changes"
+echo "==> 11) Apply changes"
 if [[ -f "${REPO_DIR}/defaults/apply.sh" ]]; then
   bash "${REPO_DIR}/defaults/apply.sh"
 else
@@ -202,9 +243,18 @@ echo "  ✓ zsh configured"
 if [[ "${MAS_READY}" == "0" ]]; then
   echo "  ⚠ MAS apps skipped (sign into App Store and re-run: brew bundle)"
 fi
+if [[ "${CREATE_BACKUP:-true}" == "true" ]] && [[ -d "${BACKUP_DIR:-${HOME}/.macos-setup-backups}" ]]; then
+  LATEST_BACKUP=$(ls -t "${BACKUP_DIR:-${HOME}/.macos-setup-backups}" 2>/dev/null | head -1)
+  if [[ -n "$LATEST_BACKUP" ]]; then
+    echo "  ✓ Backup created: ${BACKUP_DIR:-${HOME}/.macos-setup-backups}/${LATEST_BACKUP}"
+  fi
+fi
 echo
 echo "Notes:"
 echo "  - Full log saved to: ${LOG_FILE}"
 echo "  - Some changes require logout/reboot"
 echo "  - New zsh settings: open new terminal or run 'exec zsh'"
+if [[ "${CREATE_BACKUP:-true}" == "true" ]]; then
+  echo "  - To restore backup: source lib/backup.sh && restore_backup <path>"
+fi
 echo
