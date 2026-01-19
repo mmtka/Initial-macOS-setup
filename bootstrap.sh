@@ -27,6 +27,16 @@ if [[ -f "${REPO_DIR}/lib/backup.sh" ]]; then
   source "${REPO_DIR}/lib/backup.sh"
 fi
 
+# Pre-bootstrap hook
+if [[ -f "${REPO_DIR}/hooks/pre-bootstrap.sh" ]]; then
+  echo "==> Running pre-bootstrap hook"
+  bash "${REPO_DIR}/hooks/pre-bootstrap.sh" || {
+    echo "ERROR: Pre-bootstrap hook failed"
+    exit 1
+  }
+  echo
+fi
+
 echo "==> 0) Rosetta (Apple Silicon only)"
 ARCH="$(uname -m)"
 if [[ "${ARCH}" == "arm64" ]]; then
@@ -231,6 +241,13 @@ if [[ -f "${REPO_DIR}/defaults/apply.sh" ]]; then
   bash "${REPO_DIR}/defaults/apply.sh"
 else
   echo "⚠ defaults/apply.sh not found, skipping"
+fi
+
+# Post-bootstrap hook
+if [[ -f "${REPO_DIR}/hooks/post-bootstrap.sh" ]]; then
+  echo
+  echo "==> Running post-bootstrap hook"
+  bash "${REPO_DIR}/hooks/post-bootstrap.sh" || echo "⚠ Post-bootstrap hook failed (non-critical)"
 fi
 
 echo
