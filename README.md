@@ -1,6 +1,6 @@
 
 ```
-git clone https://github.com/<tvoj_user>/Initial-macOS-Setup.git
+git clone https://github.com/mmtka/Initial-macOS-Setup.git
 cd "Initial-macOS-Setup"
 ./bootstrap.sh
 ```
