@@ -1,0 +1,150 @@
+name: Validate Setup Scripts
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Validate Scripts and Brewfile
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Homebrew
+        run: |
+          echo "Homebrew version: $(brew --version)"
+
+      - name: Validate Brewfile syntax
+        run: |
+          echo "==> Validating Brewfile syntax"
+          brew bundle check --file Brewfile || {
+            echo "ERROR: Brewfile validation failed"
+            echo "Run 'brew bundle check --file Brewfile' locally to debug"
+            exit 1
+          }
+          echo "✓ Brewfile syntax is valid"
+
+      - name: Install shellcheck
+        run: brew install shellcheck
+
+      - name: Shellcheck - bootstrap.sh
+        run: |
+          echo "==> Running shellcheck on bootstrap.sh"
+          shellcheck -x bootstrap.sh || {
+            echo "ERROR: shellcheck failed on bootstrap.sh"
+            exit 1
+          }
+          echo "✓ bootstrap.sh passed shellcheck"
+
+      - name: Shellcheck - install.sh
+        run: |
+          echo "==> Running shellcheck on install.sh"
+          shellcheck install.sh || {
+            echo "ERROR: shellcheck failed on install.sh"
+            exit 1
+          }
+          echo "✓ install.sh passed shellcheck"
+
+      - name: Shellcheck - config.sh
+        run: |
+          echo "==> Running shellcheck on config.sh"
+          shellcheck config.sh || {
+            echo "ERROR: shellcheck failed on config.sh"
+            exit 1
+          }
+          echo "✓ config.sh passed shellcheck"
+
+      - name: Shellcheck - defaults scripts
+        run: |
+          echo "==> Running shellcheck on defaults/*.sh"
+          shellcheck defaults/*.sh || {
+            echo "ERROR: shellcheck failed on defaults scripts"
+            exit 1
+          }
+          echo "✓ All defaults scripts passed shellcheck"
+
+      - name: Shellcheck - dock scripts
+        run: |
+          echo "==> Running shellcheck on dock/*.sh"
+          shellcheck dock/*.sh || {
+            echo "ERROR: shellcheck failed on dock scripts"
+            exit 1
+          }
+          echo "✓ All dock scripts passed shellcheck"
+
+      - name: Shellcheck - lib scripts
+        run: |
+          echo "==> Running shellcheck on lib/*.sh"
+          shellcheck lib/*.sh || {
+            echo "ERROR: shellcheck failed on lib scripts"
+            exit 1
+          }
+          echo "✓ All lib scripts passed shellcheck"
+
+      - name: Check for common issues
+        run: |
+          echo "==> Checking for common issues"
+          
+          # Check for .DS_Store files
+          if find . -name '.DS_Store' | grep -q .; then
+            echo "ERROR: .DS_Store files found in repository"
+            find . -name '.DS_Store'
+            exit 1
+          fi
+          echo "✓ No .DS_Store files found"
+          
+          # Check for hardcoded paths that might break
+          if grep -r "python@3.14" . --include="*.sh" --include="Brewfile" 2>/dev/null; then
+            echo "ERROR: Invalid Python version found (3.14 does not exist)"
+            exit 1
+          fi
+          echo "✓ No invalid Python versions found"
+          
+          # Check for tabs in shell scripts (should use spaces)
+          if grep -P '\t' bootstrap.sh defaults/*.sh dock/*.sh lib/*.sh 2>/dev/null; then
+            echo "WARNING: Tabs found in shell scripts (prefer spaces)"
+          else
+            echo "✓ No tabs found in shell scripts"
+          fi
+
+      - name: Validate config.sh structure
+        run: |
+          echo "==> Validating config.sh structure"
+          source config.sh
+          
+          # Check required variables
+          required_vars=(
+            "LOCALE"
+            "CURRENCY"
+            "TIMEZONE"
+            "LANGUAGES"
+          )
+          
+          for var in "${required_vars[@]}"; do
+            if [[ -z "${!var+x}" ]]; then
+              echo "ERROR: Required variable $var not set in config.sh"
+              exit 1
+            fi
+          done
+          echo "✓ All required config variables are set"
+
+      - name: Summary
+        if: success()
+        run: |
+          echo ""
+          echo "=============================================="
+          echo "✓ All validation checks passed!"
+          echo "=============================================="
+          echo ""
+          echo "Validated:"
+          echo "  - Brewfile syntax"
+          echo "  - Shell script syntax (shellcheck)"
+          echo "  - Configuration structure"
+          echo "  - Common issues"
+          echo ""
