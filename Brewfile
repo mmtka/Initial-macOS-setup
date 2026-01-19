@@ -21,7 +21,7 @@ brew "curl"
 brew "wget"
 brew "tree"
 
-brew "python@3.14"
+brew "python@3.13"
 brew "bpython"
 
 brew "htop"
@@ -37,7 +37,7 @@ brew "m-cli"
 brew "ripgrep"
 brew "rsync"
 
-brew "speedtest"           # (nahrádza speedtest-cli)
+brew "speedtest-cli"
 
 # Utilities / helpers
 brew "ossp-uuid"
@@ -96,7 +96,7 @@ cask "cloudmounter"
 cask "keka"
 
 cask "nextcloud"
-cask "syncthing-app"
+cask "syncthing"
 
 
 # ============================================
@@ -115,7 +115,7 @@ cask "jordanbaird-ice@beta"
 # SECURITY / PRIVACY
 # ============================================
 cask "1password"
-cask "alienator88-sentinel"
+cask "sentinel"
 cask "protonvpn"
 cask "lulu"
 
@@ -140,7 +140,7 @@ cask "macfuse"
 cask "orbstack"
 
 # Wireshark
-cask "wireshark-app"
+cask "wireshark"
 
 # Adobe (heavy)
 cask "adobe-creative-cloud"
@@ -164,7 +164,7 @@ cask "brave-browser"
 cask "obsidian"
 cask "onlyoffice"
 
-# Microsoft Office – v generated máš jednotlivé appky
+# Microsoft Office
 cask "microsoft-word"
 cask "microsoft-excel"
 cask "microsoft-powerpoint"
@@ -237,7 +237,7 @@ mas "Keynote", id: 409183694
 
 
 # ============================================
-# VS CODE EXTENSIONS (optional, but you have them)
+# VS CODE EXTENSIONS
 # ============================================
 vscode "danielpinto8zz6.c-cpp-compile-run"
 vscode "davidbwaters.macos-modern-theme"
