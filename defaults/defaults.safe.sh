@@ -129,6 +129,34 @@ defaults write com.apple.finder NewWindowTargetPath -string "file://${HOME}/"
 # Show ~/Library
 chflags nohidden "${HOME}/Library" 2>/dev/null || true
 
+# Quick Look text selection
+defaults write com.apple.finder QLEnableTextSelection -bool true
+
+# Show POSIX path in Finder title
+defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
+
+# Disable warning before emptying Trash
+defaults write com.apple.finder WarnOnEmptyTrash -bool true
+
+# Expand File Info panes
+defaults write com.apple.finder FXInfoPanesExpanded -dict \
+  General -bool true \
+  OpenWith -bool true \
+  Privileges -bool true
+
+# Enable Quit Finder menu item
+defaults write com.apple.finder QuitMenuItem -bool true
+
+# Disable iCloud Drive removal warning
+defaults write com.apple.finder FXEnableRemoveFromICloudDriveWarning -bool false
+
+# Show Recent Tags in sidebar
+defaults write com.apple.finder ShowRecentTags -bool false
+
+# Spawn new windows instead of tabs
+defaults write com.apple.finder FinderSpawnTab -bool true
+
+
 ###############################################################################
 # DOCK / SPACES / HOT CORNERS
 ###############################################################################
