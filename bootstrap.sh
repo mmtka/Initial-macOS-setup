@@ -96,20 +96,52 @@ compinit -u
 ZR_ADD
 fi
 
-echo "==> 4) Install from Brewfile (brew bundle)"
+echo "==> 4) MAS (Mac App Store) login check"
+
+# Ensure mas CLI is available (it's in your Brewfile, but may not be installed yet on a fresh Mac)
+if ! command -v mas >/dev/null 2>&1; then
+  echo "==> Installing 'mas' first (required to install App Store apps)"
+  brew install mas
+fi
+
+check_mas_login() {
+  # mas account returns 0 and prints Apple ID email when logged in; otherwise non-zero
+  mas account >/dev/null 2>&1
+}
+
+if ! check_mas_login; then
+  echo
+  echo "!!! ACTION REQUIRED: Please sign in to the Mac App Store"
+  echo "1) The App Store will open now."
+  echo "2) Sign in with your Apple ID (Account -> Sign In)."
+  echo "3) Return to this Terminal and press Enter."
+  echo
+
+  open -a "App Store" || true
+
+  while ! check_mas_login; do
+    read -r -p "Press Enter AFTER you have signed in to the App Store... " _
+  done
+
+  echo "==> MAS signed in as: $(mas account)"
+else
+  echo "==> MAS already signed in as: $(mas account)"
+fi
+
+echo "==> 5) Install from Brewfile (brew bundle)"
 brew update
 brew bundle --file "${BREWFILE}"
 
-echo "==> 5) macOS defaults (safe)"
+echo "==> 6) macOS defaults (safe)"
 bash "${REPO_DIR}/defaults/defaults.safe.sh"
 
-echo "==> 6) macOS defaults (power) - requires sudo"
+echo "==> 7) macOS defaults (power) - requires sudo"
 bash "${REPO_DIR}/defaults/defaults.power.sh"
 
-echo "==> 7) Dock layout (dockutil) - best effort"
+echo "==> 8) Dock layout (dockutil) - best effort"
 bash "${REPO_DIR}/dock/layout.sh" || true
 
-echo "==> 8) Apply changes"
+echo "==> 9) Apply changes"
 bash "${REPO_DIR}/defaults/apply.sh"
 
 echo
