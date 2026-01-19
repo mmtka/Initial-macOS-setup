@@ -6,6 +6,7 @@ set -euo pipefail
 # Notes:
 # - Dockfinity exported some system apps with Cryptex/Preboot paths (unstable).
 #   We therefore use stable canonical system paths as fallbacks.
+# - Adobe apps use dynamic detection (version-independent)
 # - We add items in order (no explicit --position needed).
 # -----------------------------------------------------------------------------
 
@@ -39,6 +40,30 @@ add_app() {
   return 0
 }
 
+find_adobe_app() {
+  local app_name="$1"
+  # Search for Adobe apps dynamically (version-independent)
+  local found=$(find /Applications -maxdepth 2 -name "${app_name}*.app" -type d 2>/dev/null | head -1)
+  if [[ -n "$found" ]]; then
+    echo "$found"
+  fi
+}
+
+add_adobe_app() {
+  local search_name="$1"
+  local fallback_path="${2:-}"
+  
+  local app_path=$(find_adobe_app "$search_name")
+  
+  if [[ -n "$app_path" ]]; then
+    dockutil --add "$app_path" --no-restart >/dev/null
+  elif [[ -n "$fallback_path" ]] && [[ -e "$fallback_path" ]]; then
+    dockutil --add "$fallback_path" --no-restart >/dev/null
+  else
+    echo "WARN: Adobe app not found: $search_name"
+  fi
+}
+
 # -----------------------------------------------------------------------------
 # Apps (in Dockfinity order positions 0..31)
 # -----------------------------------------------------------------------------
@@ -60,8 +85,8 @@ add_app "/System/Applications/Photos.app"
 add_app "/Applications/Plex.app"
 add_app "/Applications/Plexamp.app"
 
-add_app "/Applications/Adobe Acrobat DC/Adobe Acrobat.app" \
-        "/Applications/Adobe Acrobat.app"
+# Adobe apps with dynamic detection
+add_adobe_app "Adobe Acrobat"
 
 add_app "/Applications/Pages.app"
 add_app "/Applications/Numbers.app"
@@ -69,14 +94,19 @@ add_app "/Applications/Microsoft Word.app"
 
 add_app "/Applications/ONLYOFFICE.app"
 
-add_app "/Applications/Adobe Bridge 2026/Adobe Bridge 2026.app"
-add_app "/Applications/Adobe Illustrator 2026/Adobe Illustrator.app"
-add_app "/Applications/Adobe Photoshop 2026/Adobe Photoshop 2026.app"
-add_app "/Applications/Adobe InDesign 2026/Adobe InDesign 2026.app"
-add_app "/Applications/Adobe Audition 2025/Adobe Audition 2025.app"
+# Adobe Creative Cloud apps (version-independent)
+add_adobe_app "Adobe Bridge"
+add_adobe_app "Adobe Illustrator"
+add_adobe_app "Adobe Photoshop"
+add_adobe_app "Adobe InDesign"
+add_adobe_app "Adobe Audition"
 
 add_app "/Applications/Telegram.app"
-add_app "/Applications/Parallels Desktop.app"
+
+# Parallels Desktop (not in Brewfile - manual install)
+if [[ -e "/Applications/Parallels Desktop.app" ]]; then
+  add_app "/Applications/Parallels Desktop.app"
+fi
 
 add_app "/System/Applications/System Settings.app"
 add_app "/System/Applications/Utilities/System Information.app"
