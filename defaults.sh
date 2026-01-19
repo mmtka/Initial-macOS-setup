@@ -1,178 +1,284 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-# Close any open System Preferences panes, to prevent them from overriding
-# settings we’re about to change
-osascript -e 'tell application "System Preferences" to quit'
+# Close System Settings/Preferences to avoid overrides
+osascript -e 'tell application "System Settings" to quit' >/dev/null 2>&1 || true
+osascript -e 'tell application "System Preferences" to quit' >/dev/null 2>&1 || true
 
-# Ask for the administrator password upfront
+# Ask for admin upfront
 sudo -v
 
-# Keep-alive: update existing `sudo` time stamp until `.macos` has finished
+# Keep sudo alive
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
+# Helpers
+OS_VER="$(sw_vers -productVersion)"
+HOSTNAME_SHORT="$(scutil --get ComputerName 2>/dev/null || true)"
 
-# GENERAL :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+echo "Applying macOS defaults on ${OS_VER} ..."
 
-# Disable the sound effects on boot
-sudo nvram SystemAudioVolume=" "
+# ==============================================================================
+# GENERAL
+# ==============================================================================
 
-# Save to disk (not to iCloud) by default
+# Disable boot sound
+sudo nvram SystemAudioVolume=" " 2>/dev/null || true
+
+# Save to disk (not iCloud) by default
 defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
 
-# Disable the “Are you sure you want to open this application?” dialog
+# Disable Gatekeeper "downloaded from internet" quarantine prompts (WARNING: security tradeoff)
 defaults write com.apple.LaunchServices LSQuarantine -bool false
 
 # Use AirDrop over every interface
-defaults write com.apple.NetworkBrowser BrowseAllInterfaces 1
+defaults write com.apple.NetworkBrowser BrowseAllInterfaces -bool true
 
-# Remove duplicates in the “Open With” menu (also see `lscleanup` alias)
-/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user
-
-# Disable automatic Smart Substitutions
+# Disable automatic smart substitutions
 defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
 defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
 defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
 defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
 
-# Disable auto-correct. OH YEAH PLEASE!
+# Disable auto-correct
 defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 
-# Set language and text formats
-defaults write NSGlobalDomain AppleLanguages -array "sk" "en" "cz" "de"
+# Language / locale
+defaults write NSGlobalDomain AppleLanguages -array "sk" "en" "cs" "de"
 defaults write NSGlobalDomain AppleLocale -string "de_DE@currency=EUR"
 defaults write NSGlobalDomain AppleMeasurementUnits -string "Centimeters"
 defaults write NSGlobalDomain AppleMetricUnits -bool true
 
-# Set the timezone
-sudo systemsetup -settimezone "Europe/Berlin" > /dev/null
+# Timezone
+sudo systemsetup -settimezone "Europe/Berlin" >/dev/null 2>&1 || true
 
-# Hide language menu in the top right corner of the boot screen
-sudo defaults write /Library/Preferences/com.apple.loginwindow showInputMenu -bool false
+# Hide input menu on login screen
+sudo defaults write /Library/Preferences/com.apple.loginwindow showInputMenu -bool false 2>/dev/null || true
 
+# Expand save/print panels by default
+defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
+defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true
+defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
+defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
 
-# TRACKPAD :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# Disable "natural" scrolling? (comment/uncomment)
+# defaults write NSGlobalDomain com.apple.swipescrolldirection -bool false
 
-# Enable tap to click for this user and for the login screen
+# ==============================================================================
+# INPUT: TRACKPAD / MOUSE / KEYBOARD
+# ==============================================================================
+
+# Tap to click (user + login screen)
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
 defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 
-# Enable 3-finger drag
+# 3-finger drag
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerDrag -bool true
 defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool true
 
+# Key repeat (faster)
+defaults write NSGlobalDomain KeyRepeat -int 2
+defaults write NSGlobalDomain InitialKeyRepeat -int 15
 
-# ENERGY SAVING ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# Disable press-and-hold for keys (enable key repeat everywhere)
+defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 
-# Enable lid wakeup
+# Fn/🌐 key usage: 1=Show Emoji & Symbols, 2=Change Input Source, 0=Do Nothing (varies by macOS)
+defaults write com.apple.HIToolbox AppleFnUsageType -int 1
+
+# ==============================================================================
+# ENERGY / POWER
+# ==============================================================================
+
+# Lid wake
 sudo pmset -a lidwake 1
 
-# Sleep the display after 5 minutes
+# Display sleep (minutes)
 sudo pmset -a displaysleep 5
 
-# Disable machine sleep while charging
+# No machine sleep on charger
 sudo pmset -c sleep 0
 
-# Set machine sleep to 10 minutes on battery
+# Machine sleep on battery
 sudo pmset -b sleep 10
 
-# Disable hibernation
-sudo pmset -a hibernatemode 0
+# Hibernation mode (0 disables safe sleep – tradeoff)
+sudo pmset -a hibernatemode 0 || true
 
-# FINDER :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# ==============================================================================
+# SCREENSHOTS
+# ==============================================================================
 
-# Show icons for hard drives, servers, and removable media on the desktop
+# Save screenshots to ~/Screenshots
+mkdir -p "${HOME}/Screenshots"
+defaults write com.apple.screencapture location -string "${HOME}/Screenshots"
+
+# Screenshot format: png/jpg/pdf/tiff
+defaults write com.apple.screencapture type -string "png"
+
+# Disable screenshot shadow
+defaults write com.apple.screencapture disable-shadow -bool true
+
+# ==============================================================================
+# FINDER
+# ==============================================================================
+
+# Show icons on Desktop
 defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
 defaults write com.apple.finder ShowHardDrivesOnDesktop -bool true
 defaults write com.apple.finder ShowMountedServersOnDesktop -bool true
 defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool true
 
-# Disable window animations
+# Disable Finder window animations
 defaults write com.apple.finder DisableAllAnimations -bool true
 
-# Disable warning when changing a file extension
+# Show file extensions
+defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+
+# Show hidden files (comment/uncomment)
+# defaults write com.apple.finder AppleShowAllFiles -bool true
+
+# Disable warning when changing file extension
 defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
 
-# Avoid creating .DS_Store files on network or USB volumes
+# Avoid creating .DS_Store on network/USB
 defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
 defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
 
-# Automatically open a new Finder window when a volume is mounted
+# Automatically open Finder window for mounted volumes
 defaults write com.apple.frameworks.diskimages auto-open-ro-root -bool true
 defaults write com.apple.frameworks.diskimages auto-open-rw-root -bool true
 defaults write com.apple.finder OpenWindowForNewRemovableDisk -bool true
 
-# Set home as default location for new Finder windows
+# New Finder windows open: Home
 defaults write com.apple.finder NewWindowTarget -string "PfHm"
+# defaults write com.apple.finder NewWindowTargetPath -string "file://${HOME}/"
 
-# Show status & path bar
+# Status & path bar
 defaults write com.apple.finder ShowStatusBar -bool true
 defaults write com.apple.finder ShowPathbar -bool true
 
 # Keep folders on top when sorting by name
 defaults write com.apple.finder _FXSortFoldersFirst -bool true
 
-# Search the current folder by default
+# Search current folder by default
 defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
 
-# Set grid spacing for icons on the desktop and in other icon views
-/usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:gridSpacing 64" ~/Library/Preferences/com.apple.finder.plist
-/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:gridSpacing 64" ~/Library/Preferences/com.apple.finder.plist
-/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:gridSpacing 64" ~/Library/Preferences/com.apple.finder.plist
-
-# Set icons size on the desktop and in other icon views
-/usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:iconSize 48" ~/Library/Preferences/com.apple.finder.plist
-/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:iconSize 48" ~/Library/Preferences/com.apple.finder.plist
-/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:iconSize 48" ~/Library/Preferences/com.apple.finder.plist
-
-# Use collum view in all Finder windows by default
-# Four-letter codes for the other view modes: 'Nlsv', 'glyv', 'icnv',
+# Preferred view style: clmv (column), Nlsv (list), icnv (icon), glyv (gallery)
 defaults write com.apple.finder FXPreferredViewStyle -string "clmv"
 
-# Show the ~/Library folder
-chflags nohidden ~/Library
+# Show ~/Library
+chflags nohidden "${HOME}/Library" || true
 
-# Create user Sites directory
-mkdir -p "$HOME/Sites"
+# Create ~/Sites
+mkdir -p "${HOME}/Sites"
 
+# Finder icon view settings (guarded – plist keys may not exist on fresh systems)
+FPLIST="${HOME}/Library/Preferences/com.apple.finder.plist"
+if [[ -f "${FPLIST}" ]]; then
+  /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:gridSpacing 64" "${FPLIST}" 2>/dev/null || true
+  /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:gridSpacing 64" "${FPLIST}" 2>/dev/null || true
+  /usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:gridSpacing 64" "${FPLIST}" 2>/dev/null || true
 
-# DOCK ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:iconSize 48" "${FPLIST}" 2>/dev/null || true
+  /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:iconSize 48" "${FPLIST}" 2>/dev/null || true
+  /usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:iconSize 48" "${FPLIST}" 2>/dev/null || true
+fi
 
-# Set the icon size of Dock items
+# ==============================================================================
+# DOCK / MISSION CONTROL
+# ==============================================================================
+
+# Dock icon size
 defaults write com.apple.dock tilesize -int 32
 
-# Minimize windows into their application’s icon
+# Minimize into application icon
 defaults write com.apple.dock minimize-to-application -bool true
 
-# Wipe all default app icons from the Dock
-defaults write com.apple.dock persistent-apps -array true
-
-# Don’t show recent applications in Dock
+# Don’t show recent applications
 defaults write com.apple.dock show-recents -bool false
 
+# Disable automatic rearrangement of Spaces
+defaults write com.apple.dock mru-spaces -bool false
 
-# NETWORK :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# Hot corners (example: top-left = Mission Control)
+# Possible values: 0=disabled, 2=Mission Control, 4=Desktop, 5=Start Screen Saver, 10=Put Display to Sleep
+# defaults write com.apple.dock wvous-tl-corner -int 2
+# defaults write com.apple.dock wvous-tl-modifier -int 0
 
-# Set default Cloudflare DNS (and Google as fallback)
-networksetup -setdnsservers Wi-Fi 1.1.1.1 1.0.0.1 8.8.8.8
+# IMPORTANT: wiping Dock icons via defaults is fragile. Prefer dockutil in bootstrap if needed.
+# (Your old line `persistent-apps -array true` was wrong syntax.) :contentReference[oaicite:1]{index=1}
 
+# ==============================================================================
+# SAFARI (optional – comment out if you don't want it)
+# ==============================================================================
 
-# TERMINAL :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# Show full URL in address bar
+defaults write com.apple.Safari ShowFullURLInSmartSearchField -bool true
 
-# Set default Terminal theme to Pro (dark)
-defaults write com.apple.terminal "Default Window Settings" -string "Brew"
-defaults write com.apple.terminal "Startup Window Settings" -string "Brew"
+# Enable Develop menu
+defaults write com.apple.Safari IncludeDevelopMenu -bool true
+defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true
+defaults write NSGlobalDomain WebKitDeveloperExtras -bool true
 
-# OTHER :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#"Application Downloaded from Internet" popup will not display
-defaults write com.apple.LaunchServices "LSQuarantine" -bool "false"
+# ==============================================================================
+# ACTIVITY MONITOR (nice defaults)
+# ==============================================================================
 
-# APPLE INTELIGENCE ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-defaults write com.apple.CloudSubscriptionFeatures.optIn "545129924" -bool "false"
+# Show CPU usage in Dock icon (0=none, 2=CPU)
+defaults write com.apple.ActivityMonitor IconType -int 2
 
+# Show main window when launching
+defaults write com.apple.ActivityMonitor OpenMainWindow -bool true
 
-# MISSION CONTROL ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-defaults write com.apple.dock "mru-spaces" -bool "false"
+# ==============================================================================
+# TERMINAL
+# ==============================================================================
 
-# Fn/🌐 key usage ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-defaults write com.apple.HIToolbox AppleFnUsageType -int "1"
+# Default Terminal profile (if you have a profile named "Brew")
+defaults write com.apple.terminal "Default Window Settings" -string "Brew" 2>/dev/null || true
+defaults write com.apple.terminal "Startup Window Settings" -string "Brew" 2>/dev/null || true
+
+# ==============================================================================
+# NETWORK
+# ==============================================================================
+
+# Set DNS servers for Wi-Fi (Cloudflare + Google fallback)
+# NOTE: interface name differs on some systems. If Wi-Fi isn't correct, change it.
+networksetup -setdnsservers "Wi-Fi" 1.1.1.1 1.0.0.1 8.8.8.8 2>/dev/null || true
+
+# ==============================================================================
+# TIME MACHINE (optional)
+# ==============================================================================
+
+# Don’t offer new disks for backup
+defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
+
+# ==============================================================================
+# SECURITY (optional)
+# ==============================================================================
+
+# Enable firewall (may require UI confirmation in newer macOS; still safe)
+sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on >/dev/null 2>&1 || true
+sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setstealthmode on >/dev/null 2>&1 || true
+
+# ==============================================================================
+# APPLE INTELLIGENCE / CLOUD FEATURES (your existing setting kept)
+# ==============================================================================
+defaults write com.apple.CloudSubscriptionFeatures.optIn "545129924" -bool false 2>/dev/null || true
+
+# ==============================================================================
+# APPLY CHANGES
+# ==============================================================================
+
+# Rebuild LaunchServices "Open With" menu
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister \
+  -kill -r -domain local -domain system -domain user >/dev/null 2>&1 || true
+
+# Restart affected apps/services
+killall Finder >/dev/null 2>&1 || true
+killall Dock >/dev/null 2>&1 || true
+killall SystemUIServer >/dev/null 2>&1 || true
+killall cfprefsd >/dev/null 2>&1 || true
+
+echo "Done. Some changes may require log out / restart."
