@@ -10,7 +10,6 @@ BREWFILE="${REPO_DIR}/Brewfile"
 echo "==> 0) Rosetta (Apple Silicon only)"
 ARCH="$(uname -m)"
 if [[ "${ARCH}" == "arm64" ]]; then
-  # Install Rosetta silently if not installed
   /usr/bin/pgrep oahd >/dev/null 2>&1 || /usr/sbin/softwareupdate --install-rosetta --agree-to-license || true
 fi
 
@@ -43,7 +42,6 @@ if [[ -x /opt/homebrew/bin/brew ]]; then
 fi
 ZP
 else
-  # Add brew shellenv if missing
   grep -q '/opt/homebrew/bin/brew shellenv' "${ZPROFILE}" || cat >> "${ZPROFILE}" <<'ZP_ADD'
 
 # Homebrew (Apple Silicon)
@@ -84,10 +82,8 @@ alias la='ls -A'
 alias l='ls -lah'
 ZR
 else
-  # Ensure PATH de-duplication is present
   grep -q '^typeset -U path PATH$' "${ZSHRC}" || printf '\n# De-duplicate PATH entries\ntypeset -U path PATH\n' >> "${ZSHRC}"
 
-  # Ensure compinit exists (minimal)
   grep -q 'compinit' "${ZSHRC}" || cat >> "${ZSHRC}" <<'ZR_ADD'
 
 # Completion
@@ -97,8 +93,6 @@ ZR_ADD
 fi
 
 echo "==> 4) MAS (Mac App Store) login check"
-
-echo "==> MAS (Mac App Store) login check"
 
 # Ensure mas is available early
 if ! command -v mas >/dev/null 2>&1; then
@@ -123,12 +117,12 @@ if ! check_mas_login; then
     case "${choice}" in
       1)
         echo
-        echo "Opening App Store…"
+        echo "Opening App Store..."
         echo "Sign in (Account -> Sign In), then come back here."
         open -a "App Store" || true
 
         while ! check_mas_login; do
-          read -r -p "Press Enter AFTER you have signed in… " _
+          read -r -p "Press Enter AFTER you have signed in... " _
         done
 
         echo "==> MAS signed in as: $(mas account)"
@@ -153,7 +147,6 @@ else
   echo "==> MAS already signed in as: $(mas account)"
   export MAS_READY=1
 fi
-
 
 echo "==> 5) Install from Brewfile (brew bundle)"
 brew update
