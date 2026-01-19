@@ -4,17 +4,43 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BREWFILE="${REPO_DIR}/Brewfile"
 
+# Logging
+LOG_FILE="${HOME}/bootstrap-$(date +%Y%m%d-%H%M%S).log"
+exec > >(tee -a "${LOG_FILE}") 2>&1
+
+echo "==> Bootstrap log: ${LOG_FILE}"
+echo
+
 echo "==> 0) Rosetta (Apple Silicon only)"
 ARCH="$(uname -m)"
 if [[ "${ARCH}" == "arm64" ]]; then
-  /usr/bin/pgrep oahd >/dev/null 2>&1 || /usr/sbin/softwareupdate --install-rosetta --agree-to-license || true
+  if /usr/bin/pgrep oahd >/dev/null 2>&1; then
+    echo "✓ Rosetta already installed"
+  else
+    echo "Installing Rosetta..."
+    /usr/sbin/softwareupdate --install-rosetta --agree-to-license || true
+  fi
+else
+  echo "Intel Mac detected, skipping Rosetta"
 fi
 
+echo
 echo "==> 1) Xcode Command Line Tools (if needed)"
-xcode-select -p >/dev/null 2>&1 || xcode-select --install || true
+if xcode-select -p >/dev/null 2>&1; then
+  echo "✓ Xcode Command Line Tools already installed"
+else
+  echo "Installing Xcode Command Line Tools..."
+  xcode-select --install || true
+  echo "⚠ Complete the installer prompt, then re-run this script"
+  exit 0
+fi
 
+echo
 echo "==> 2) Homebrew (if needed)"
-if ! command -v brew >/dev/null 2>&1; then
+if command -v brew >/dev/null 2>&1; then
+  echo "✓ Homebrew already installed"
+else
+  echo "Installing Homebrew..."
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
@@ -23,6 +49,7 @@ if [[ -x /opt/homebrew/bin/brew ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
+echo
 echo "==> 3) Minimal zsh init"
 ZPROFILE="${HOME}/.zprofile"
 ZSHRC="${HOME}/.zshrc"
@@ -38,14 +65,20 @@ if [[ -x /opt/homebrew/bin/brew ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 ZP
+  echo "✓ Created ${ZPROFILE}"
 else
-  grep -q '/opt/homebrew/bin/brew shellenv' "${ZPROFILE}" || cat >> "${ZPROFILE}" <<'ZP_ADD'
+  if ! grep -q '/opt/homebrew/bin/brew shellenv' "${ZPROFILE}"; then
+    cat >> "${ZPROFILE}" <<'ZP_ADD'
 
 # Homebrew (Apple Silicon)
 if [[ -x /opt/homebrew/bin/brew ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 ZP_ADD
+    echo "✓ Updated ${ZPROFILE}"
+  else
+    echo "✓ ${ZPROFILE} already configured"
+  fi
 fi
 
 # Ensure .zshrc exists with minimal sane defaults
@@ -78,64 +111,100 @@ alias ll='ls -lah'
 alias la='ls -A'
 alias l='ls -lah'
 ZR
+  echo "✓ Created ${ZSHRC}"
 else
-  grep -q '^typeset -U path PATH$' "${ZSHRC}" || printf '\n# De-duplicate PATH entries\ntypeset -U path PATH\n' >> "${ZSHRC}"
-
-  grep -q 'compinit' "${ZSHRC}" || cat >> "${ZSHRC}" <<'ZR_ADD'
+  if ! grep -q '^typeset -U path PATH$' "${ZSHRC}"; then
+    printf '\n# De-duplicate PATH entries\ntypeset -U path PATH\n' >> "${ZSHRC}"
+  fi
+  
+  if ! grep -q 'compinit' "${ZSHRC}"; then
+    cat >> "${ZSHRC}" <<'ZR_ADD'
 
 # Completion
 autoload -Uz compinit
 compinit -u
 ZR_ADD
+  fi
+  echo "✓ ${ZSHRC} already configured"
 fi
 
+echo
 echo "==> 4) MAS (Mac App Store) login check"
 
 # Ensure mas is available early
 if ! command -v mas >/dev/null 2>&1; then
-  echo "==> Installing 'mas' first (required for App Store apps)"
+  echo "Installing 'mas' (required for App Store apps)..."
   brew install mas
 fi
 
-check_mas_login() {
-  # 1) Most reliable: mas account prints Apple ID when logged in
-  if mas account 2>/dev/null | grep -qi '@'; then
-    return 0
-  fi
-
-  # 2) Fallback: if mas can list purchases, you're effectively signed in
-  # (works on some systems where mas account is flaky)
-  if mas purchase 2>/dev/null | head -n 1 | grep -qiE '^[0-9]+'; then
-    return 0
-  fi
-
-  return 1
-}
-
-
-echo "==> 5) Install from Brewfile (brew bundle)"
-brew update
-brew bundle --file "${BREWFILE}"
-
-if [[ "${MAS_READY:-1}" == "0" ]]; then
-  echo "==> MAS was skipped. If you sign in later, run: brew bundle"
+# Check MAS login status
+if mas account 2>/dev/null | grep -qi '@'; then
+  echo "✓ Logged into App Store ($(mas account 2>/dev/null))"
+  MAS_READY=1
+else
+  echo "⚠ NOT logged into App Store"
+  echo "  MAS apps will be skipped during bundle install"
+  echo "  To install them later:"
+  echo "    1. Sign in via App Store.app"
+  echo "    2. Run: brew bundle --file ${BREWFILE}"
+  MAS_READY=0
 fi
 
+echo
+echo "==> 5) Install from Brewfile (brew bundle)"
+brew update
+brew bundle --file "${BREWFILE}" --no-lock
+
+if [[ "${MAS_READY}" == "0" ]]; then
+  echo
+  echo "⚠ MAS apps were skipped (not logged into App Store)"
+fi
+
+echo
 echo "==> 6) macOS defaults (safe)"
-bash "${REPO_DIR}/defaults/defaults.safe.sh"
+if [[ -f "${REPO_DIR}/defaults/defaults.safe.sh" ]]; then
+  bash "${REPO_DIR}/defaults/defaults.safe.sh"
+else
+  echo "⚠ defaults.safe.sh not found, skipping"
+fi
 
+echo
 echo "==> 7) macOS defaults (power) - requires sudo"
-bash "${REPO_DIR}/defaults/defaults.power.sh"
+if [[ -f "${REPO_DIR}/defaults/defaults.power.sh" ]]; then
+  bash "${REPO_DIR}/defaults/defaults.power.sh"
+else
+  echo "⚠ defaults.power.sh not found, skipping"
+fi
 
+echo
 echo "==> 8) Dock layout (dockutil) - best effort"
-bash "${REPO_DIR}/dock/layout.sh" || true
+if [[ -f "${REPO_DIR}/dock/layout.sh" ]]; then
+  bash "${REPO_DIR}/dock/layout.sh" || echo "⚠ Dock layout failed (non-critical)"
+else
+  echo "⚠ dock/layout.sh not found, skipping"
+fi
 
+echo
 echo "==> 9) Apply changes"
-bash "${REPO_DIR}/defaults/apply.sh"
+if [[ -f "${REPO_DIR}/defaults/apply.sh" ]]; then
+  bash "${REPO_DIR}/defaults/apply.sh"
+else
+  echo "⚠ defaults/apply.sh not found, skipping"
+fi
 
 echo
 echo "==> DONE"
+echo
+echo "Summary:"
+echo "  ✓ Homebrew packages installed"
+echo "  ✓ macOS defaults configured"
+echo "  ✓ zsh configured"
+if [[ "${MAS_READY}" == "0" ]]; then
+  echo "  ⚠ MAS apps skipped (sign into App Store and re-run: brew bundle)"
+fi
+echo
 echo "Notes:"
-echo "- MAS installs require you to be signed into App Store."
-echo "- Some security changes may require logout/reboot on newer macOS."
-echo "- New zsh settings apply to new terminals; run: exec zsh"
+echo "  - Full log saved to: ${LOG_FILE}"
+echo "  - Some changes require logout/reboot"
+echo "  - New zsh settings: open new terminal or run 'exec zsh'"
+echo
