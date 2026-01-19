@@ -1,6 +1,3 @@
-cd /Users/martin/Documents/GitHub/Initial-macOS-Setup
-
-cat > bootstrap.sh <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -101,52 +98,20 @@ if ! command -v mas >/dev/null 2>&1; then
 fi
 
 check_mas_login() {
-  mas account >/dev/null 2>&1
+  # 1) Most reliable: mas account prints Apple ID when logged in
+  if mas account 2>/dev/null | grep -qi '@'; then
+    return 0
+  fi
+
+  # 2) Fallback: if mas can list purchases, you're effectively signed in
+  # (works on some systems where mas account is flaky)
+  if mas purchase 2>/dev/null | head -n 1 | grep -qiE '^[0-9]+'; then
+    return 0
+  fi
+
+  return 1
 }
 
-if ! check_mas_login; then
-  echo
-  echo "MAS is NOT signed in. Choose:"
-  echo "  1) Sign in now (recommended) - open App Store and wait"
-  echo "  2) Skip MAS apps - continue without App Store installs"
-  echo "  3) Abort"
-  echo
-
-  while true; do
-    read -r -p "Select [1/2/3]: " choice
-    case "${choice}" in
-      1)
-        echo
-        echo "Opening App Store..."
-        echo "Sign in (Account -> Sign In), then come back here."
-        open -a "App Store" || true
-
-        while ! check_mas_login; do
-          read -r -p "Press Enter AFTER you have signed in... " _
-        done
-
-        echo "==> MAS signed in as: $(mas account)"
-        export MAS_READY=1
-        break
-        ;;
-      2)
-        echo "==> Skipping MAS installs for this run."
-        export MAS_READY=0
-        break
-        ;;
-      3)
-        echo "Aborted."
-        exit 1
-        ;;
-      *)
-        echo "Invalid choice. Please enter 1, 2, or 3."
-        ;;
-    esac
-  done
-else
-  echo "==> MAS already signed in as: $(mas account)"
-  export MAS_READY=1
-fi
 
 echo "==> 5) Install from Brewfile (brew bundle)"
 brew update
@@ -174,6 +139,3 @@ echo "Notes:"
 echo "- MAS installs require you to be signed into App Store."
 echo "- Some security changes may require logout/reboot on newer macOS."
 echo "- New zsh settings apply to new terminals; run: exec zsh"
-EOF
-
-chmod +x bootstrap.sh
