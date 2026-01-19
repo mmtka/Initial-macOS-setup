@@ -98,39 +98,70 @@ fi
 
 echo "==> 4) MAS (Mac App Store) login check"
 
-# Ensure mas CLI is available (it's in your Brewfile, but may not be installed yet on a fresh Mac)
+echo "==> MAS (Mac App Store) login check"
+
+# Ensure mas is available early
 if ! command -v mas >/dev/null 2>&1; then
-  echo "==> Installing 'mas' first (required to install App Store apps)"
+  echo "==> Installing 'mas' first (required for App Store apps)"
   brew install mas
 fi
 
 check_mas_login() {
-  # mas account returns 0 and prints Apple ID email when logged in; otherwise non-zero
   mas account >/dev/null 2>&1
 }
 
 if ! check_mas_login; then
   echo
-  echo "!!! ACTION REQUIRED: Please sign in to the Mac App Store"
-  echo "1) The App Store will open now."
-  echo "2) Sign in with your Apple ID (Account -> Sign In)."
-  echo "3) Return to this Terminal and press Enter."
+  echo "MAS is NOT signed in. Choose:"
+  echo "  1) Sign in now (recommended) - open App Store and wait"
+  echo "  2) Skip MAS apps - continue without App Store installs"
+  echo "  3) Abort"
   echo
 
-  open -a "App Store" || true
+  while true; do
+    read -r -p "Select [1/2/3]: " choice
+    case "${choice}" in
+      1)
+        echo
+        echo "Opening App Store…"
+        echo "Sign in (Account -> Sign In), then come back here."
+        open -a "App Store" || true
 
-  while ! check_mas_login; do
-    read -r -p "Press Enter AFTER you have signed in to the App Store... " _
+        while ! check_mas_login; do
+          read -r -p "Press Enter AFTER you have signed in… " _
+        done
+
+        echo "==> MAS signed in as: $(mas account)"
+        export MAS_READY=1
+        break
+        ;;
+      2)
+        echo "==> Skipping MAS installs for this run."
+        export MAS_READY=0
+        break
+        ;;
+      3)
+        echo "Aborted."
+        exit 1
+        ;;
+      *)
+        echo "Invalid choice. Please enter 1, 2, or 3."
+        ;;
+    esac
   done
-
-  echo "==> MAS signed in as: $(mas account)"
 else
   echo "==> MAS already signed in as: $(mas account)"
+  export MAS_READY=1
 fi
+
 
 echo "==> 5) Install from Brewfile (brew bundle)"
 brew update
 brew bundle --file "${BREWFILE}"
+
+if [[ "${MAS_READY:-1}" == "0" ]]; then
+  echo "==> MAS was skipped. If you sign in later, run: brew bundle"
+fi
 
 echo "==> 6) macOS defaults (safe)"
 bash "${REPO_DIR}/defaults/defaults.safe.sh"
