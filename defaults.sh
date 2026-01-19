@@ -124,6 +124,7 @@ defaults write com.apple.screencapture disable-shadow -bool true
 # ==============================================================================
 
 # Show icons on Desktop
+defaults write com.apple.finder AppleShowAllFiles -bool true
 defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
 defaults write com.apple.finder ShowHardDrivesOnDesktop -bool true
 defaults write com.apple.finder ShowMountedServersOnDesktop -bool true
@@ -245,7 +246,7 @@ defaults write com.apple.terminal "Startup Window Settings" -string "Brew" 2>/de
 
 # Set DNS servers for Wi-Fi (Cloudflare + Google fallback)
 # NOTE: interface name differs on some systems. If Wi-Fi isn't correct, change it.
-networksetup -setdnsservers "Wi-Fi" 1.1.1.1 1.0.0.1 8.8.8.8 2>/dev/null || true
+# networksetup -setdnsservers "Wi-Fi" 1.1.1.1 1.0.0.1 8.8.8.8 2>/dev/null || true
 
 # ==============================================================================
 # TIME MACHINE (optional)
@@ -266,6 +267,31 @@ sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setstealthmode on >/dev/n
 # APPLE INTELLIGENCE / CLOUD FEATURES (your existing setting kept)
 # ==============================================================================
 defaults write com.apple.CloudSubscriptionFeatures.optIn "545129924" -bool false 2>/dev/null || true
+
+# ==============================================================================
+# INPUT – disable "natural" scrolling
+# ==============================================================================
+defaults write NSGlobalDomain com.apple.swipescrolldirection -bool false
+
+# ==============================================================================
+# HOT CORNERS
+# Values: 0=disabled, 2=Mission Control, 4=Desktop, 5=Start Screen Saver, 10=Put Display to Sleep
+# ==============================================================================
+# Top-left: Mission Control
+defaults write com.apple.dock wvous-tl-corner -int 2
+defaults write com.apple.dock wvous-tl-modifier -int 0
+
+# Top-right: Desktop
+defaults write com.apple.dock wvous-tr-corner -int 4
+defaults write com.apple.dock wvous-tr-modifier -int 0
+
+# Bottom-left: Put Display to Sleep
+defaults write com.apple.dock wvous-bl-corner -int 10
+defaults write com.apple.dock wvous-bl-modifier -int 0
+
+# Bottom-right: disabled
+defaults write com.apple.dock wvous-br-corner -int 0
+defaults write com.apple.dock wvous-br-modifier -int 0
 
 # ==============================================================================
 # APPLY CHANGES
