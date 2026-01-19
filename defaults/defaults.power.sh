@@ -1,20 +1,31 @@
-cat > defaults/defaults.power.sh <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
+
+# Load configuration
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
+if [[ -f "${REPO_DIR}/config.sh" ]]; then
+  source "${REPO_DIR}/config.sh"
+fi
 
 ###############################################################################
 # POWER DEFAULTS (needs sudo; includes security tradeoffs)
 ###############################################################################
 sudo -v
 
-# Keep timezone fixed
-sudo systemsetup -settimezone "Europe/Berlin" >/dev/null 2>&1 || true
+# Keep timezone from config.sh
+echo "Setting timezone to: ${TIMEZONE}"
+sudo systemsetup -settimezone "${TIMEZONE}" >/dev/null 2>&1 || true
 
 # Disable boot sound
 sudo nvram SystemAudioVolume=" " 2>/dev/null || true
 
-# Gatekeeper quarantine prompt off (SECURITY TRADEOFF)
-defaults write com.apple.LaunchServices LSQuarantine -bool false
+# Gatekeeper quarantine (SECURITY TRADEOFF - from config.sh)
+if [[ "${DISABLE_GATEKEEPER_QUARANTINE}" == "true" ]]; then
+  echo "⚠ WARNING: Disabling Gatekeeper quarantine (security risk)"
+  defaults write com.apple.LaunchServices LSQuarantine -bool false
+else
+  echo "✓ Gatekeeper quarantine remains enabled (recommended)"
+fi
 
 # Fn key behavior (1 = Emoji & Symbols on many macOS versions)
 defaults write com.apple.HIToolbox AppleFnUsageType -int 1
@@ -34,6 +45,3 @@ sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setstealthmode on >/dev/n
 
 # Apple feature flag (safe if missing)
 defaults write com.apple.CloudSubscriptionFeatures.optIn "545129924" -bool false 2>/dev/null || true
-EOF
-
-chmod +x defaults/defaults.power.sh
