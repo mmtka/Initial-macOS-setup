@@ -66,7 +66,7 @@ defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool t
 # Key repeat faster
 defaults write NSGlobalDomain KeyRepeat -int 2
 defaults write NSGlobalDomain InitialKeyRepeat -int 15
-defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
+defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool true
 
 # Classic (non-natural) scrolling
 defaults write NSGlobalDomain com.apple.swipescrolldirection -bool false
