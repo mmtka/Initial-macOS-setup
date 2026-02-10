@@ -78,6 +78,11 @@ cask "mediainfoex"
 cask "tinymediamanager"
 cask "finetune"
 
+# ============================================
+# SMART HOME
+# ============================================
+cask "nickustinov/tap/itsytv"
+
 
 # ============================================
 # CLEANING / MAINTENANCE
