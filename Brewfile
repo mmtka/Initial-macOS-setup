@@ -76,6 +76,7 @@ cask "mkvtoolnix-app"
 cask "audacity"
 cask "mediainfoex"
 cask "tinymediamanager"
+cask "finetune"
 
 
 # ============================================
