@@ -120,8 +120,8 @@ cask "default-folder-x"
 cask "domzilla-caffeine"
 cask "magicquit"
 cask "last-window-quits"
-cask "itsycal"
-cask "jordanbaird-ice@beta"
+cask "itsycal" # menu bar calendar
+cask "thaw" # menu bar management tool; alternative to Bartender and fork from ICE by Jordan Baird
 cask "monuk7735/tap/mew-notch" # Make the Mac Notch Actually Useful!
 
 
