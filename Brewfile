@@ -30,7 +30,7 @@ brew "bandwhich"
 brew "dua-cli"
 brew "dust"
 brew "midnight-commander"
-brew "duf" # better df
+brew "duf"  # better df
 
 brew "dockutil" 
 brew "m-cli"
@@ -65,8 +65,8 @@ brew "gping"
 brew "cfssl"
 cask "rana-gmbh/netfluss/netfluss"  # showing real-time upload and download speeds across all active adapters
 # VPN Bypass start
-tap "geiserx/vpn-bypass" # Add the tap (first time only)
-cask "vpn-bypass" # Install VPN Bypass
+tap "geiserx/vpn-bypass"    # Add the tap (first time only)
+cask "vpn-bypass"   # Install VPN Bypass
 # VPN Bypass end
 
 
@@ -120,9 +120,9 @@ cask "default-folder-x"
 cask "domzilla-caffeine"
 cask "magicquit"
 cask "last-window-quits"
-cask "itsycal" # menu bar calendar
-cask "thaw" # menu bar management tool; alternative to Bartender and fork from ICE by Jordan Baird
-cask "monuk7735/tap/mew-notch" # Make the Mac Notch Actually Useful!
+cask "itsycal"  # menu bar calendar
+cask "thaw"     # menu bar management tool; alternative to Bartender and fork from ICE by Jordan Baird
+cask "monuk7735/tap/mew-notch"  # Make the Mac Notch Actually Useful!
 
 
 # ============================================
@@ -146,7 +146,8 @@ cask "espanso"
 cask "ganttproject"
 cask "overkill"
 cask "openvisualtraceroute"
-cask "keyclu" #applications shortcuts Shortcuts owerview via command key
+cask "keyclu"   # applications shortcuts Shortcuts owerview via command key
+cask "rsyncui"  # A SwiftUI-based macOS GUI for rsync. 
 
 # macOS / FS
 cask "macfuse" 
@@ -207,7 +208,7 @@ cask "pycharm"
 cask "qlcolorcode"
 cask "apparency"
 cask "suspicious-package"
-cask "glance-chamburr" # All-in-one Quick Look plugin
+cask "glance-chamburr"  # All-in-one Quick Look plugin
 
 
 # ============================================
