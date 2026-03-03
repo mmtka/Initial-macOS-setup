@@ -30,12 +30,14 @@ brew "bandwhich"
 brew "dua-cli"
 brew "dust"
 brew "midnight-commander"
+brew "duf" # better df
 
-brew "dockutil"
+brew "dockutil" 
 brew "m-cli"
 
 brew "ripgrep"
 brew "rsync"
+brew "mole" # system cleaner
 
 brew "speedtest-cli"
 
