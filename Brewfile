@@ -63,6 +63,11 @@ brew "nmap"
 brew "mtr"
 brew "gping"
 brew "cfssl"
+cask "rana-gmbh/netfluss/netfluss"  # showing real-time upload and download speeds across all active adapters
+# VPN Bypass start
+tap "geiserx/vpn-bypass" # Add the tap (first time only)
+cask "vpn-bypass" # Install VPN Bypass
+# VPN Bypass end
 
 
 # ============================================
@@ -117,6 +122,7 @@ cask "magicquit"
 cask "last-window-quits"
 cask "itsycal"
 cask "jordanbaird-ice@beta"
+cask "monuk7735/tap/mew-notch" # Make the Mac Notch Actually Useful!
 
 
 # ============================================
@@ -140,9 +146,10 @@ cask "espanso"
 cask "ganttproject"
 cask "overkill"
 cask "openvisualtraceroute"
+cask "keyclu" #applications shortcuts Shortcuts owerview via command key
 
 # macOS / FS
-cask "macfuse"
+cask "macfuse" 
 
 # Docker / virtualization
 cask "orbstack"
@@ -200,7 +207,7 @@ cask "pycharm"
 cask "qlcolorcode"
 cask "apparency"
 cask "suspicious-package"
-cask "glance-chamburr"
+cask "glance-chamburr" # All-in-one Quick Look plugin
 
 
 # ============================================
