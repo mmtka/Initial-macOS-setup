@@ -24,8 +24,7 @@ brew "tree"
 brew "python@3.13"
 brew "bpython"
 
-brew "htop"
-brew "bpytop"
+brew "btop"
 brew "bandwhich"
 brew "dua-cli"
 brew "dust"
@@ -103,8 +102,9 @@ cask "daisydisk"
 # ============================================
 # WORK WITH FILES / TERMINAL / SYNC
 # ============================================
-cask "warp"
-cask "termius"
+# cask "warp"
+# cask "termius"
+cask "tabby"
 cask "cloudmounter"
 cask "keka"
 
@@ -144,7 +144,6 @@ cask "deepl"
 cask "drawio"
 cask "espanso"
 cask "ganttproject"
-cask "overkill"
 cask "openvisualtraceroute"
 cask "keyclu"   # applications shortcuts Shortcuts owerview via command key
 cask "rsyncui"  # A SwiftUI-based macOS GUI for rsync. 
@@ -196,7 +195,8 @@ cask "wiso-steuer-2026"
 # ============================================
 # DEV TOOLS
 # ============================================
-cask "visual-studio-code"
+# cask "visual-studio-code" #MS Proprietär
+cask "vscodium" #open-source
 cask "openinterminal"
 cask "imazing-profile-editor"
 cask "pycharm"
