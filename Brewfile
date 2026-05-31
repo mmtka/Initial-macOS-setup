@@ -59,6 +59,10 @@ brew "vitorgalvao/tiny-scripts/cask-repair"
 # Proxmox helper
 brew "roshie548/tap/proxmux"
 
+# NTFS for MacOS
+
+cask "tuxera-ntfs"
+
 
 # ============================================
 # NETWORK / SECURITY (CLI)
@@ -95,6 +99,7 @@ cask "mediainfoex"
 cask "tinymediamanager"
 cask "finetune"
 brew "yt-dlp"
+#https://github.com/jely2002/youtube-dl-gui
 
 # ============================================
 # SMART HOME
@@ -127,6 +132,7 @@ cask "syncthing"
 cask "nextcloud-vfs"
 cask "syncthing-app"
 cask "transmission"
+#soulseek
 
 
 # ============================================
