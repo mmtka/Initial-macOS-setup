@@ -2,11 +2,11 @@
 # ============================================
 # Pre-bootstrap hook
 # Runs before bootstrap.sh main execution
+# Note: bootstrap.sh already prints "==> Running pre-bootstrap hook"
+#       before calling this script — do NOT repeat that echo here.
 # ============================================
 
 set -euo pipefail
-
-echo "==> Running pre-bootstrap hook"
 
 # Example: Check for required tools
 # if ! command -v git >/dev/null 2>&1; then

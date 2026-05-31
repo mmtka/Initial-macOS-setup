@@ -142,7 +142,7 @@ else
   if ! grep -q '^typeset -U path PATH$' "${ZSHRC}"; then
     printf '\n# De-duplicate PATH entries\ntypeset -U path PATH\n' >> "${ZSHRC}"
   fi
-  
+
   if ! grep -q 'compinit' "${ZSHRC}"; then
     cat >> "${ZSHRC}" <<'ZR_ADD'
 
@@ -157,7 +157,11 @@ fi
 echo
 echo "==> 4) Backup current system settings"
 if command -v create_backup >/dev/null 2>&1; then
-  create_backup
+  if [[ "${CREATE_BACKUP:-true}" == "true" ]]; then
+    create_backup
+  else
+    echo "ℹ Backup disabled in config.sh, skipping"
+  fi
 else
   echo "ℹ Backup function not available, skipping"
 fi
@@ -187,7 +191,7 @@ fi
 echo
 echo "==> 6) Install from Brewfile (brew bundle)"
 brew update
-brew bundle --file "${BREWFILE}" --no-lock
+brew bundle install --file "${BREWFILE}"
 
 if [[ "${MAS_READY}" == "0" ]]; then
   echo
