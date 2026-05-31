@@ -249,10 +249,10 @@ echo   "  Installing formulae, casks and MAS apps listed in Brewfile."
 echo   "  This is typically the longest step — grab a coffee ☕"
 # ─────────────────────────────────────────────────────────────────────────────
 echo "  Updating Homebrew first..."
-brew update
 
+# Verbose brew so you see every formula/cask as it's processed
 set +e
-brew bundle install --file "${BREWFILE}" 2>&1 | while IFS= read -r line; do
+HOMEBREW_COLOR=1 brew bundle install --verbose --file "${BREWFILE}" 2>&1 | while IFS= read -r line; do
   echo "  ${line}"
   if [[ "${line}" == *"Error:"* ]] || [[ "${line}" == *"error:"* ]]; then
     failed_item="$(echo "${line}" | sed 's/.*[Ee]rror: //')"
