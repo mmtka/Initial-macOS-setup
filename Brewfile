@@ -64,7 +64,7 @@ cask "tuxera-ntfs"
 
 # System cleaner
 brew "mac-cleanup-go"
-brew "mole"  # github.com/tw93/Mole – system cleaner (brew formula)
+brew "mole"  # github.com/tw93/Mole
 
 # macOS / FS
 cask "macfuse"
@@ -156,7 +156,6 @@ cask "last-window-quits"
 cask "itsycal"  # menu bar calendar
 cask "thaw"     # menu bar management
 cask "launchie" # Launchpad
-# cask "monuk7735/tap/mew-notch"  # tap GitHub 404
 
 
 # ============================================
