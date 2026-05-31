@@ -8,7 +8,6 @@
 # ---------- TAPS ----------
 tap "homebrew/bundle"
 tap "homebrew/cask-fonts"
-cask "wailbrew"
 tap "roshie548/tap"
 tap "slp/krun"
 tap "vitorgalvao/tiny-scripts"
@@ -36,8 +35,8 @@ brew "dockutil"
 brew "m-cli"
 
 brew "ripgrep"
-brew "cronboard"
 brew "rsync"
+brew "mole" # system cleaner
 
 brew "speedtest-cli"
 
@@ -47,10 +46,6 @@ brew "parallel"
 brew "pandoc"
 brew "imagemagick"
 brew "ffmpeg"
-brew "bzip2"
-
-# Battery
-cask "srimanachanta/tap/stasis"
 
 # Bundle helpers
 brew "mas"
@@ -72,35 +67,27 @@ cask "rana-gmbh/netfluss/netfluss"  # showing real-time upload and download spee
 tap "geiserx/vpn-bypass"    # Add the tap (first time only)
 cask "vpn-bypass"   # Install VPN Bypass
 # VPN Bypass end
-brew "wakeonlan"
-cask "jasine/tap/netmounter"
-
-#https://bornexplorer.in/online-indicator/
-tcptracerout
 
 
 # ============================================
 # MEDIA (CLI + GUI)
 # ============================================
 brew "mkvtoolnix"
+
 cask "iina"
-cask "vlc"
 cask "spotify"
 cask "plex"
 cask "plexamp"
-cask "jellyfin-media-player"
 cask "mkvtoolnix-app"
 cask "audacity"
 cask "mediainfoex"
 cask "tinymediamanager"
 cask "finetune"
-brew "yt-dlp"
 
 # ============================================
 # SMART HOME
 # ============================================
 cask "nickustinov/tap/itsytv"
-cask "home-assistant"
 
 
 # ============================================
@@ -110,8 +97,6 @@ cask "onyx"
 cask "pearcleaner"
 cask "cleanupbuddy"
 cask "daisydisk"
-brew "mole" # system cleaner
-brew "mac-cleanup-go"# system cleaner
 
 
 # ============================================
@@ -122,11 +107,9 @@ brew "mac-cleanup-go"# system cleaner
 cask "tabby"
 cask "cloudmounter"
 cask "keka"
+
 cask "nextcloud"
 cask "syncthing"
-cask "nextcloud-vfs"
-cask "syncthing-app"
-cask "transmission"
 
 
 # ============================================
@@ -140,18 +123,15 @@ cask "last-window-quits"
 cask "itsycal"  # menu bar calendar
 cask "thaw"     # menu bar management tool; alternative to Bartender and fork from ICE by Jordan Baird
 cask "monuk7735/tap/mew-notch"  # Make the Mac Notch Actually Useful!
-cask "launchie" #Launchpad
 
 
 # ============================================
 # SECURITY / PRIVACY
 # ============================================
 cask "1password"
-cask "bitwarden"
 cask "sentinel"
 cask "protonvpn"
 cask "lulu"
-brew "certbot"
 
 
 # ============================================
@@ -159,7 +139,7 @@ brew "certbot"
 # ============================================
 cask "mist"
 cask "balenaetcher"
-#cask "db-browser-for-sqlite"
+cask "db-browser-for-sqlite"
 cask "deepl"
 cask "drawio"
 cask "espanso"
@@ -176,7 +156,6 @@ cask "orbstack"
 
 # Wireshark
 cask "wireshark"
-cask "wireshark-app"
 
 # Adobe (heavy)
 cask "adobe-creative-cloud"
@@ -199,11 +178,8 @@ cask "brave-browser"
 # ============================================
 cask "obsidian"
 cask "onlyoffice"
-cask "anki"
 
 # Microsoft Office
-cask "microsoft-auto-update"
-cask "microsoft-office"
 cask "microsoft-word"
 cask "microsoft-excel"
 cask "microsoft-powerpoint"
@@ -219,12 +195,11 @@ cask "wiso-steuer-2026"
 # ============================================
 # DEV TOOLS
 # ============================================
-cask "visual-studio-code" #MS Proprietär
-#cask "vscodium" #open-source
+# cask "visual-studio-code" #MS Proprietär
+cask "vscodium" #open-source
 cask "openinterminal"
 cask "imazing-profile-editor"
 cask "pycharm"
-cask "github"
 
 
 # ============================================
@@ -286,6 +261,8 @@ vscode "dbaeumer.vscode-eslint"
 vscode "dzhavat.css-flexbox-cheatsheet"
 vscode "ecmel.vscode-html-css"
 vscode "editorconfig.editorconfig"
+vscode "github.copilot"
+vscode "github.copilot-chat"
 vscode "golang.go"
 vscode "ms-azuretools.vscode-containers"
 vscode "ms-python.debugpy"
@@ -294,12 +271,10 @@ vscode "ms-python.vscode-pylance"
 vscode "ms-python.vscode-python-envs"
 vscode "ms-vscode-remote.remote-containers"
 vscode "ms-vscode.cmake-tools"
-vscode "ms-vscode.cpp-devtools"
 vscode "ms-vscode.cpptools"
 vscode "ms-vscode.cpptools-extension-pack"
 vscode "ms-vscode.cpptools-themes"
 vscode "openai.chatgpt"
-vscode "parallelsdesktop.parallels-desktop"
 vscode "pawelborkar.jellyfish"
 vscode "pdconsec.vscode-print"
 vscode "pinegrow.piny"
