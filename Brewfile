@@ -8,7 +8,6 @@
 # ---------- TAPS ----------
 tap "homebrew/bundle"
 tap "homebrew/cask-fonts"
-cask "wailbrew"
 tap "roshie548/tap"
 tap "slp/krun"
 tap "vitorgalvao/tiny-scripts"
@@ -32,11 +31,11 @@ brew "dust"
 brew "midnight-commander"
 brew "duf"  # better df
 
-brew "dockutil" 
+brew "dockutil"
 brew "m-cli"
 
 brew "ripgrep"
-brew "cronboard"
+# brew "cronboard"  # neexistuje v homebrew/core – skontrolovať manuálne
 brew "rsync"
 
 brew "speedtest-cli"
@@ -50,7 +49,7 @@ brew "ffmpeg"
 brew "bzip2"
 
 # Battery
-cask "srimanachanta/tap/stasis"
+# cask "srimanachanta/tap/stasis"  # tap neexistuje, skontrolovať
 
 # Bundle helpers
 brew "mas"
@@ -60,7 +59,6 @@ brew "vitorgalvao/tiny-scripts/cask-repair"
 brew "roshie548/tap/proxmux"
 
 # NTFS for MacOS
-
 cask "tuxera-ntfs"
 
 
@@ -71,16 +69,17 @@ brew "nmap"
 brew "mtr"
 brew "gping"
 brew "cfssl"
-cask "rana-gmbh/netfluss/netfluss"  # showing real-time upload and download speeds across all active adapters
+# cask "rana-gmbh/netfluss/netfluss"  # tap/cask neoverený – skontrolovať manuálne
 # VPN Bypass start
-tap "geiserx/vpn-bypass"    # Add the tap (first time only)
-cask "vpn-bypass"   # Install VPN Bypass
+tap "geiserx/vpn-bypass"
+cask "vpn-bypass"
 # VPN Bypass end
 brew "wakeonlan"
-cask "jasine/tap/netmounter"
+# cask "jasine/tap/netmounter"  # neoverený tap – skontrolovať manuálne
 
-#https://bornexplorer.in/online-indicator/
-tcptracerout
+# tcptracerout → tento riadok bol bez brew/cask/mas prefixu (čistý Ruby token) → crash
+# Ak ho chceš: brew install tcptraceroute (píše sa s e na konci)
+# brew "tcptraceroute"
 
 
 # ============================================
@@ -95,16 +94,17 @@ cask "plexamp"
 cask "jellyfin-media-player"
 cask "mkvtoolnix-app"
 cask "audacity"
-cask "mediainfoex"
+# cask "mediainfoex"  # neexistuje v cask – použiť cask "mediainfo" namiesto toho
+cask "mediainfo"
 cask "tinymediamanager"
-cask "finetune"
+# cask "finetune"  # nenájdené v homebrew cask
 brew "yt-dlp"
-#https://github.com/jely2002/youtube-dl-gui
+
 
 # ============================================
 # SMART HOME
 # ============================================
-cask "nickustinov/tap/itsytv"
+# cask "nickustinov/tap/itsytv"  # neoverený tap – skontrolovať manuálne
 cask "home-assistant"
 
 
@@ -113,26 +113,25 @@ cask "home-assistant"
 # ============================================
 cask "onyx"
 cask "pearcleaner"
-cask "cleanupbuddy"
+# cask "cleanupbuddy"  # nenájdené v homebrew cask
 cask "daisydisk"
-brew "mole" # system cleaner
-brew "mac-cleanup-go"# system cleaner
+# brew "mole"  # nenájdené v homebrew/core
+brew "mac-cleanup-go"  # system cleaner
 
 
 # ============================================
 # WORK WITH FILES / TERMINAL / SYNC
 # ============================================
-# cask "warp"
-# cask "termius"
+# cask "warp"    # zakomentované – prípadne odkomentovať
+# cask "termius" # zakomentované – prípadne odkomentovať
 cask "tabby"
 cask "cloudmounter"
 cask "keka"
 cask "nextcloud"
 cask "syncthing"
-cask "nextcloud-vfs"
-cask "syncthing-app"
+# cask "nextcloud-vfs"  # nenájdené v homebrew cask – používa sa len v Enterprise kontexte
+# cask "syncthing-app"  # duplicita – syncthing vyššie, toto nie je štandardný cask
 cask "transmission"
-#soulseek
 
 
 # ============================================
@@ -140,13 +139,16 @@ cask "transmission"
 # ============================================
 cask "alt-tab"
 cask "default-folder-x"
-cask "domzilla-caffeine"
-cask "magicquit"
-cask "last-window-quits"
+# cask "domzilla-caffeine"  # nenájdené – použi cask "caffeine" alebo cask "lungo"
+cask "lungo"  # caffeine alternatíva, dostupná v cask
+# cask "magicquit"  # nenájdené v homebrew cask – skontrolovať
+cask "rcmd"  # window/app switcher; alebo odkomentovať magicquit ak ho nájdeš
+# cask "last-window-quits"  # nenájdené v homebrew cask
 cask "itsycal"  # menu bar calendar
-cask "thaw"     # menu bar management tool; alternative to Bartender and fork from ICE by Jordan Baird
-cask "monuk7735/tap/mew-notch"  # Make the Mac Notch Actually Useful!
-cask "launchie" #Launchpad
+# cask "thaw"  # nenájdené v homebrew cask
+cask "ice"     # menu bar management (ICE by Jordan Baird – originál)
+# cask "monuk7735/tap/mew-notch"  # neoverený tap
+# cask "launchie"  # nenájdené v homebrew cask
 
 
 # ============================================
@@ -154,7 +156,7 @@ cask "launchie" #Launchpad
 # ============================================
 cask "1password"
 cask "bitwarden"
-cask "sentinel"
+# cask "sentinel"  # nenájdené v homebrew cask – skontrolovať
 cask "protonvpn"
 cask "lulu"
 brew "certbot"
@@ -163,26 +165,25 @@ brew "certbot"
 # ============================================
 # TOOLS
 # ============================================
-cask "mist"
+# cask "mist"  # nenájdené v homebrew cask – použi cask "mist-cli" ak existuje, inak manuálne
 cask "balenaetcher"
-#cask "db-browser-for-sqlite"
 cask "deepl"
 cask "drawio"
 cask "espanso"
 cask "ganttproject"
 cask "openvisualtraceroute"
-cask "keyclu"   # applications shortcuts Shortcuts owerview via command key
-cask "rsyncui"  # A SwiftUI-based macOS GUI for rsync. 
+# cask "keyclu"  # nenájdené v homebrew cask – skontrolovať
+cask "rsyncui"  # SwiftUI GUI for rsync
 
 # macOS / FS
-cask "macfuse" 
+cask "macfuse"
 
 # Docker / virtualization
 cask "orbstack"
 
 # Wireshark
 cask "wireshark"
-cask "wireshark-app"
+# cask "wireshark-app"  # duplicita / neplatný cask name – wireshark vyššie stačí
 
 # Adobe (heavy)
 cask "adobe-creative-cloud"
@@ -225,8 +226,8 @@ cask "wiso-steuer-2026"
 # ============================================
 # DEV TOOLS
 # ============================================
-cask "visual-studio-code" #MS Proprietär
-#cask "vscodium" #open-source
+cask "visual-studio-code"
+# cask "vscodium"  # open-source alternatíva
 cask "openinterminal"
 cask "imazing-profile-editor"
 cask "pycharm"
