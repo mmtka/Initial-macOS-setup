@@ -17,10 +17,14 @@ fi
 
 # Logging
 LOG_FILE="${HOME}/bootstrap-$(date +%Y%m%d-%H%M%S).log"
+DESKTOP_LOG="${HOME}/Desktop/bootstrap-errors-$(date +%Y%m%d-%H%M%S).log"
 exec > >(tee -a "${LOG_FILE}") 2>&1
 
 echo "==> Bootstrap log: ${LOG_FILE}"
 echo
+
+# Track failed items for desktop log
+FAILED_ITEMS=()
 
 # Load backup library if available
 if [[ -f "${REPO_DIR}/lib/backup.sh" ]]; then
@@ -80,7 +84,6 @@ echo "==> 3) Minimal zsh init"
 ZPROFILE="${HOME}/.zprofile"
 ZSHRC="${HOME}/.zshrc"
 
-# Ensure .zprofile exists and contains brew shellenv exactly once
 if [[ ! -f "${ZPROFILE}" ]]; then
   cat > "${ZPROFILE}" <<'ZP'
 # ~/.zprofile
@@ -107,13 +110,12 @@ ZP_ADD
   fi
 fi
 
-# Ensure .zshrc exists with minimal sane defaults
 if [[ ! -f "${ZSHRC}" ]]; then
   cat > "${ZSHRC}" <<'ZR'
 # ~/.zshrc
 # Interactive shell config
 
-# De-duplicate PATH entries (prevents PATH bloat)
+# De-duplicate PATH entries
 typeset -U path PATH
 
 # History
@@ -142,7 +144,6 @@ else
   if ! grep -q '^typeset -U path PATH$' "${ZSHRC}"; then
     printf '\n# De-duplicate PATH entries\ntypeset -U path PATH\n' >> "${ZSHRC}"
   fi
-
   if ! grep -q 'compinit' "${ZSHRC}"; then
     cat >> "${ZSHRC}" <<'ZR_ADD'
 
@@ -160,22 +161,19 @@ if command -v create_backup >/dev/null 2>&1; then
   if [[ "${CREATE_BACKUP:-true}" == "true" ]]; then
     create_backup
   else
-    echo "ℹ Backup disabled in config.sh, skipping"
+    echo "\u2139 Backup disabled in config.sh, skipping"
   fi
 else
-  echo "ℹ Backup function not available, skipping"
+  echo "\u2139 Backup function not available, skipping"
 fi
 
 echo
 echo "==> 5) MAS (Mac App Store) login check"
-
-# Ensure mas is available early
 if ! command -v mas >/dev/null 2>&1; then
   echo "Installing 'mas' (required for App Store apps)..."
   brew install mas
 fi
 
-# Check MAS login status
 if mas account 2>/dev/null | grep -qi '@'; then
   echo "✓ Logged into App Store ($(mas account 2>/dev/null))"
   MAS_READY=1
@@ -191,14 +189,69 @@ fi
 echo
 echo "==> 6) Install from Brewfile (brew bundle)"
 brew update
-brew bundle install --file "${BREWFILE}"
+
+# ----------------------------------------------------------------
+# Funkcia: nainštaluj jednú položku, pri zlyhaní sa opýtaj či pokračovať
+# ----------------------------------------------------------------
+install_item() {
+  local type="$1"   # brew | cask | mas | tap | vscode
+  local name="$2"   # názov balíčka
+
+  echo "  -> [${type}] ${name}"
+  if ! brew "${type}" install "${name}" 2>&1; then
+    echo
+    echo "❌ Zlyhalo: [${type}] ${name}"
+    FAILED_ITEMS+=("[${type}] ${name}")
+
+    # Interaktívny režim iba ak máme TTY
+    if [[ -t 0 ]]; then
+      printf "➡ Pokračovať ďalej? [Y/n]: "
+      read -r answer
+      case "${answer}" in
+        [nN]) echo "Bootstrap prerusený užívateľom."; exit 1 ;;
+        *)    echo "Preskakujem, pokračujeme..."; return 0 ;;
+      esac
+    else
+      echo "  (neinteraktívny režim, automaticky preskakujem)"
+      return 0
+    fi
+  fi
+}
+
+# brew bundle s pokračovaním pri zlyhaní (--no-lock pre kompatibilitu s novým brew)
+# brew bundle install vyhodí error ak položka neexistuje, preto spracovávame rădkové chyby
+set +e
+brew bundle install --file "${BREWFILE}" 2>&1 | while IFS= read -r line; do
+  echo "${line}"
+  if [[ "${line}" == *"Error:"* ]] || [[ "${line}" == *"error:"* ]]; then
+    # Extrahuj názov položky z chybového hlásenia
+    failed_item="$(echo "${line}" | sed 's/.*\(Error\|error\): //I')"
+    FAILED_ITEMS+=("${failed_item}")
+  fi
+done
+BREW_EXIT=${PIPESTATUS[0]}
+set -e
+
+if [[ ${BREW_EXIT} -ne 0 ]]; then
+  echo
+  echo "⚠ brew bundle skončil s chybami (exit ${BREW_EXIT})"
+  if [[ -t 0 ]]; then
+    printf "➡ Pokračovať aj napriek chybám? [Y/n]: "
+    read -r answer
+    case "${answer}" in
+      [nN]) echo "Bootstrap prerusený."; exit 1 ;;
+      *)    echo "Pokračujeme..."; ;;
+    esac
+  else
+    echo "  (neinteraktívny režim, pokračujem)"
+  fi
+fi
 
 if [[ "${MAS_READY}" == "0" ]]; then
   echo
   echo "⚠ MAS apps were skipped (not logged into App Store)"
 fi
 
-# Auto-cleanup orphaned packages
 if [[ "${AUTO_CLEANUP_BREW:-true}" == "true" ]]; then
   echo
   echo "==> 7) Cleanup orphaned Homebrew packages"
@@ -223,7 +276,7 @@ if [[ "${ENABLE_POWER_DEFAULTS:-true}" == "true" ]]; then
   fi
 else
   echo
-  echo "ℹ Power defaults disabled in config.sh"
+  echo "\u2139 Power defaults disabled in config.sh"
 fi
 
 if [[ "${ENABLE_DOCK_LAYOUT:-true}" == "true" ]]; then
@@ -236,7 +289,7 @@ if [[ "${ENABLE_DOCK_LAYOUT:-true}" == "true" ]]; then
   fi
 else
   echo
-  echo "ℹ Dock layout disabled in config.sh"
+  echo "\u2139 Dock layout disabled in config.sh"
 fi
 
 echo
@@ -254,11 +307,47 @@ if [[ -f "${REPO_DIR}/hooks/post-bootstrap.sh" ]]; then
   bash "${REPO_DIR}/hooks/post-bootstrap.sh" || echo "⚠ Post-bootstrap hook failed (non-critical)"
 fi
 
+# ----------------------------------------------------------------
+# Desktop log so zlyhanými položkami
+# ----------------------------------------------------------------
+echo
+echo "==> 12) Generujem report na plochu"
+
+{
+  echo "=== Bootstrap report – $(date '+%Y-%m-%d %H:%M:%S') ==="
+  echo "Log súbor: ${LOG_FILE}"
+  echo
+
+  if [[ ${#FAILED_ITEMS[@]} -eq 0 ]]; then
+    echo "✓ Všetky položky boli nainštalované úspešne."
+  else
+    echo "❌ Položky, ktoré sa NEPODARILO nainštalovať (doinštaluj manuálne):"
+    echo
+    for item in "${FAILED_ITEMS[@]}"; do
+      echo "  - ${item}"
+    done
+    echo
+    echo "Návod: https://github.com/mmtka/Initial-macOS-setup/blob/main/FAQ.md"
+  fi
+
+  if [[ "${MAS_READY}" == "0" ]]; then
+    echo
+    echo "⚠ MAS (App Store) položky boli preskocené – si neprihlásený."
+    echo "   Po prihlásení spusti: brew bundle --file ${BREWFILE}"
+  fi
+} > "${DESKTOP_LOG}"
+
+if [[ ${#FAILED_ITEMS[@]} -gt 0 ]]; then
+  echo "❌ Report s chybami uložený: ${DESKTOP_LOG}"
+else
+  echo "✓ Bez chýb – report uložený: ${DESKTOP_LOG}"
+fi
+
 echo
 echo "==> DONE"
 echo
 echo "Summary:"
-echo "  ✓ Homebrew packages installed"
+echo "  ✓ Homebrew packages processed"
 echo "  ✓ macOS defaults configured"
 echo "  ✓ zsh configured"
 if [[ "${MAS_READY}" == "0" ]]; then
@@ -272,10 +361,11 @@ if [[ "${CREATE_BACKUP:-true}" == "true" ]] && [[ -d "${BACKUP_DIR:-${HOME}/.mac
 fi
 echo
 echo "Notes:"
-echo "  - Full log saved to: ${LOG_FILE}"
-echo "  - Some changes require logout/reboot"
-echo "  - New zsh settings: open new terminal or run 'exec zsh'"
+echo "  - Full log: ${LOG_FILE}"
+echo "  - Desktop report: ${DESKTOP_LOG}"
+echo "  - Niektoré zmeny vyžadujú odhlásenie/restart"
+echo "  - Nové zsh nastavenia: otvor nový terminál alebo spusti 'exec zsh'"
 if [[ "${CREATE_BACKUP:-true}" == "true" ]]; then
-  echo "  - To restore backup: source lib/backup.sh && restore_backup <path>"
+  echo "  - Obnoviť zálohu: source lib/backup.sh && restore_backup <path>"
 fi
 echo

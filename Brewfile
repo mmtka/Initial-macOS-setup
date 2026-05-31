@@ -1,5 +1,5 @@
 # ============================================
-# Martin – macOS setup (Homebrew Bundle)
+# Martin – maci Setup (Homebrew Bundle)
 # Source of truth: Brewfile
 # Install:  brew bundle --file Brewfile
 # Cleanup:  brew bundle cleanup --file Brewfile
@@ -11,6 +11,7 @@ tap "homebrew/cask-fonts"
 tap "roshie548/tap"
 tap "slp/krun"
 tap "vitorgalvao/tiny-scripts"
+tap "geiserx/vpn-bypass"
 
 
 # ============================================
@@ -35,7 +36,7 @@ brew "dockutil"
 brew "m-cli"
 
 brew "ripgrep"
-# brew "cronboard"  # neexistuje v homebrew/core – skontrolovať manuálne
+brew "cronboard"
 brew "rsync"
 
 brew "speedtest-cli"
@@ -48,18 +49,27 @@ brew "imagemagick"
 brew "ffmpeg"
 brew "bzip2"
 
-# Battery
-# cask "srimanachanta/tap/stasis"  # tap neexistuje, skontrolovať
-
 # Bundle helpers
 brew "mas"
 brew "vitorgalvao/tiny-scripts/cask-repair"
 
 # Proxmox helper
-brew "roshie548/tap/proxmux"
+# brew "roshie548/tap/proxmux"  # tap GitHub 404, skontrolovať manuálne
 
 # NTFS for MacOS
 cask "tuxera-ntfs"
+
+# System cleaner
+brew "mac-cleanup-go"
+
+# macOS / FS
+cask "macfuse"
+
+# Battery menu bar
+# cask "srimanachanta/tap/stasis"  # tap GitHub 404
+
+# WailBrew (Wails GUI builder)
+cask "wailbrew"
 
 
 # ============================================
@@ -69,17 +79,17 @@ brew "nmap"
 brew "mtr"
 brew "gping"
 brew "cfssl"
-# cask "rana-gmbh/netfluss/netfluss"  # tap/cask neoverený – skontrolovať manuálne
-# VPN Bypass start
-tap "geiserx/vpn-bypass"
-cask "vpn-bypass"
-# VPN Bypass end
+brew "tcptraceroute"  # TCP traceroute (brew formula, nie cask)
 brew "wakeonlan"
-# cask "jasine/tap/netmounter"  # neoverený tap – skontrolovať manuálne
 
-# tcptracerout → tento riadok bol bez brew/cask/mas prefixu (čistý Ruby token) → crash
-# Ak ho chceš: brew install tcptraceroute (píše sa s e na konci)
-# brew "tcptraceroute"
+# Real-time bandwidth per adapter
+cask "rana-gmbh/netfluss/netfluss"  # tap: github.com/rana-gmbh/netfluss (HTTP 200)
+
+# VPN Bypass
+cask "vpn-bypass"   # tap geiserx/vpn-bypass
+
+# NetMounter – tap 404, skúsat manuálne
+# cask "jasine/tap/netmounter"
 
 
 # ============================================
@@ -94,17 +104,16 @@ cask "plexamp"
 cask "jellyfin-media-player"
 cask "mkvtoolnix-app"
 cask "audacity"
-# cask "mediainfoex"  # neexistuje v cask – použiť cask "mediainfo" namiesto toho
-cask "mediainfo"
+cask "mediainfoex"
 cask "tinymediamanager"
-# cask "finetune"  # nenájdené v homebrew cask
+cask "finetune"
 brew "yt-dlp"
 
 
 # ============================================
 # SMART HOME
 # ============================================
-# cask "nickustinov/tap/itsytv"  # neoverený tap – skontrolovať manuálne
+# cask "nickustinov/tap/itsytv"  # tap GitHub 404
 cask "home-assistant"
 
 
@@ -113,24 +122,23 @@ cask "home-assistant"
 # ============================================
 cask "onyx"
 cask "pearcleaner"
-# cask "cleanupbuddy"  # nenájdené v homebrew cask
+cask "cleanupbuddy"
 cask "daisydisk"
-# brew "mole"  # nenájdené v homebrew/core
-brew "mac-cleanup-go"  # system cleaner
+# brew "mole"  # neexistuje ako formula, existuje len ako cask "mole" no 404 – skútaj manuálne
 
 
 # ============================================
 # WORK WITH FILES / TERMINAL / SYNC
 # ============================================
-# cask "warp"    # zakomentované – prípadne odkomentovať
-# cask "termius" # zakomentované – prípadne odkomentovať
+# cask "warp"    # odkomentuj ak chceš
+# cask "termius" # odkomentuj ak chceš
 cask "tabby"
 cask "cloudmounter"
 cask "keka"
 cask "nextcloud"
 cask "syncthing"
-# cask "nextcloud-vfs"  # nenájdené v homebrew cask – používa sa len v Enterprise kontexte
-# cask "syncthing-app"  # duplicita – syncthing vyššie, toto nie je štandardný cask
+cask "nextcloud-vfs"
+cask "syncthing-app"
 cask "transmission"
 
 
@@ -139,16 +147,13 @@ cask "transmission"
 # ============================================
 cask "alt-tab"
 cask "default-folder-x"
-# cask "domzilla-caffeine"  # nenájdené – použi cask "caffeine" alebo cask "lungo"
-cask "lungo"  # caffeine alternatíva, dostupná v cask
-# cask "magicquit"  # nenájdené v homebrew cask – skontrolovať
-cask "rcmd"  # window/app switcher; alebo odkomentovať magicquit ak ho nájdeš
-# cask "last-window-quits"  # nenájdené v homebrew cask
+cask "domzilla-caffeine"
+cask "magicquit"
+cask "last-window-quits"
 cask "itsycal"  # menu bar calendar
-# cask "thaw"  # nenájdené v homebrew cask
-cask "ice"     # menu bar management (ICE by Jordan Baird – originál)
-# cask "monuk7735/tap/mew-notch"  # neoverený tap
-# cask "launchie"  # nenájdené v homebrew cask
+cask "thaw"     # menu bar management
+cask "launchie" # Launchpad
+# cask "monuk7735/tap/mew-notch"  # tap GitHub 404
 
 
 # ============================================
@@ -156,7 +161,7 @@ cask "ice"     # menu bar management (ICE by Jordan Baird – originál)
 # ============================================
 cask "1password"
 cask "bitwarden"
-# cask "sentinel"  # nenájdené v homebrew cask – skontrolovať
+cask "sentinel"
 cask "protonvpn"
 cask "lulu"
 brew "certbot"
@@ -165,25 +170,22 @@ brew "certbot"
 # ============================================
 # TOOLS
 # ============================================
-# cask "mist"  # nenájdené v homebrew cask – použi cask "mist-cli" ak existuje, inak manuálne
+cask "mist"
 cask "balenaetcher"
 cask "deepl"
 cask "drawio"
 cask "espanso"
 cask "ganttproject"
 cask "openvisualtraceroute"
-# cask "keyclu"  # nenájdené v homebrew cask – skontrolovať
+cask "keyclu"
 cask "rsyncui"  # SwiftUI GUI for rsync
-
-# macOS / FS
-cask "macfuse"
 
 # Docker / virtualization
 cask "orbstack"
 
 # Wireshark
 cask "wireshark"
-# cask "wireshark-app"  # duplicita / neplatný cask name – wireshark vyššie stačí
+cask "wireshark-app"
 
 # Adobe (heavy)
 cask "adobe-creative-cloud"
