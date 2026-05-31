@@ -231,16 +231,25 @@ if ! command -v mas >/dev/null 2>&1; then
   brew install mas
 fi
 
-if mas account 2>/dev/null | grep -qi '@'; then
-  ok "Logged into App Store: $(mas account 2>/dev/null)"
+# mas account output varies by version:
+#   older: prints Apple ID (contains @)
+#   newer: prints nothing or exits non-zero when not signed in,
+#          exits 0 and prints account info when signed in
+MAS_ACCOUNT="$(mas account 2>&1 || true)"
+if echo "${MAS_ACCOUNT}" | grep -qiE '@|apple id|signed in'; then
+  ok "Logged into App Store: ${MAS_ACCOUNT}"
   MAS_READY=1
-else
+elif [[ -z "${MAS_ACCOUNT}" ]] || echo "${MAS_ACCOUNT}" | grep -qi 'not signed\|not logged\|error'; then
   warn "NOT logged into App Store"
   echo "  MAS apps will be skipped during bundle install."
   echo "  To install them later:"
   echo "    1. Open App Store.app and sign in"
   echo "    2. Run: brew bundle --file ${BREWFILE}"
   MAS_READY=0
+else
+  # mas returned something but doesn't match known patterns — assume logged in
+  ok "Logged into App Store (detected: ${MAS_ACCOUNT})"
+  MAS_READY=1
 fi
 
 # ─────────────────────────────────────────────────────────────────────────────

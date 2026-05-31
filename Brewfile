@@ -234,7 +234,7 @@ cask "visual-studio-code"
 # cask "vscodium"  # open-source alternatíva
 cask "openinterminal"
 cask "imazing-profile-editor"
-cask "pycharm"
+# cask "pycharm"   # zakomentované — inštaluj manuálne ak treba (2026.1.2)
 cask "github"
 
 
@@ -257,67 +257,3 @@ cask "texshop"
 # ============================================
 # MAS (App Store)
 # ============================================
-
-# Social
-mas "Telegram", id: 747648890
-mas "WhatsApp", id: 310633997
-
-# Safari extensions / web
-mas "1Password for Safari", id: 1569813296
-mas "Tampermonkey Classic", id: 1482490089
-mas "Obsidian Web Clipper", id: 6720708363
-
-# Geocaching
-mas "Raccoon - Geocaching Tool", id: 424398764
-mas "iCaching", id: 420484346
-
-# Utilities / work
-mas "Actions", id: 1586435171
-mas "Magnet", id: 441258766
-mas "Paste Plain Text", id: 1407015686
-mas "OwlOCR", id: 6462355119
-mas "Paprika Recipe Manager 3", id: 1303222628
-mas "finanzblick", id: 993109868
-mas "WireGuard", id: 1451685025
-mas "Home Assistant", id: 1099568401
-mas "Keepa - Price Tracker", id: 1533805339
-
-# Apple iWork
-mas "Pages", id: 409201541
-mas "Numbers", id: 409203825
-mas "Keynote", id: 409183694
-
-
-# ============================================
-# VS CODE EXTENSIONS
-# ============================================
-vscode "danielpinto8zz6.c-cpp-compile-run"
-vscode "davidbwaters.macos-modern-theme"
-vscode "dbaeumer.vscode-eslint"
-vscode "dzhavat.css-flexbox-cheatsheet"
-vscode "ecmel.vscode-html-css"
-vscode "editorconfig.editorconfig"
-vscode "golang.go"
-vscode "ms-azuretools.vscode-containers"
-vscode "ms-python.debugpy"
-vscode "ms-python.python"
-vscode "ms-python.vscode-pylance"
-vscode "ms-python.vscode-python-envs"
-vscode "ms-vscode-remote.remote-containers"
-vscode "ms-vscode.cmake-tools"
-vscode "ms-vscode.cpp-devtools"
-vscode "ms-vscode.cpptools"
-vscode "ms-vscode.cpptools-extension-pack"
-vscode "ms-vscode.cpptools-themes"
-vscode "openai.chatgpt"
-vscode "parallelsdesktop.parallels-desktop"
-vscode "pawelborkar.jellyfish"
-vscode "pdconsec.vscode-print"
-vscode "pinegrow.piny"
-vscode "ritwickdey.liveserver"
-vscode "sidthesloth.html5-boilerplate"
-vscode "wayou.vscode-todo-highlight"
-vscode "xdebug.php-debug"
-vscode "yutengjing.vscode-archive"
-vscode "zignd.html-css-class-completion"
-vscode "zobo.php-intellisense"
