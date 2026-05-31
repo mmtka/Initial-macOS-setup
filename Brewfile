@@ -1,5 +1,5 @@
 # ============================================
-# Martin – maci Setup (Homebrew Bundle)
+# Martin – macOS Setup (Homebrew Bundle)
 # Source of truth: Brewfile
 # Install:  brew bundle --file Brewfile
 # Cleanup:  brew bundle cleanup --file Brewfile
@@ -12,6 +12,9 @@ tap "roshie548/tap"
 tap "slp/krun"
 tap "vitorgalvao/tiny-scripts"
 tap "geiserx/vpn-bypass"
+tap "jasine/tap"
+tap "srimanachanta/tap"
+tap "nickustinov/tap"
 
 
 # ============================================
@@ -54,19 +57,20 @@ brew "mas"
 brew "vitorgalvao/tiny-scripts/cask-repair"
 
 # Proxmox helper
-# brew "roshie548/tap/proxmux"  # tap GitHub 404, skontrolovať manuálne
+brew "roshie548/tap/proxmux"
 
 # NTFS for MacOS
 cask "tuxera-ntfs"
 
 # System cleaner
 brew "mac-cleanup-go"
+brew "mole"  # github.com/tw93/Mole – system cleaner (brew formula)
 
 # macOS / FS
 cask "macfuse"
 
 # Battery menu bar
-# cask "srimanachanta/tap/stasis"  # tap GitHub 404
+cask "srimanachanta/tap/stasis"  # github.com/srimanachanta/Stasis
 
 # WailBrew (Wails GUI builder)
 cask "wailbrew"
@@ -79,17 +83,17 @@ brew "nmap"
 brew "mtr"
 brew "gping"
 brew "cfssl"
-brew "tcptraceroute"  # TCP traceroute (brew formula, nie cask)
+brew "tcptraceroute"
 brew "wakeonlan"
 
 # Real-time bandwidth per adapter
-cask "rana-gmbh/netfluss/netfluss"  # tap: github.com/rana-gmbh/netfluss (HTTP 200)
+cask "rana-gmbh/netfluss/netfluss"  # github.com/rana-gmbh/netfluss
 
 # VPN Bypass
 cask "vpn-bypass"   # tap geiserx/vpn-bypass
 
-# NetMounter – tap 404, skúsat manuálne
-# cask "jasine/tap/netmounter"
+# NetMounter – github.com/jasine/net-mounter
+cask "netmounter"   # tap jasine/tap
 
 
 # ============================================
@@ -113,7 +117,7 @@ brew "yt-dlp"
 # ============================================
 # SMART HOME
 # ============================================
-# cask "nickustinov/tap/itsytv"  # tap GitHub 404
+cask "itsytv"  # github.com/nickustinov/itsytv-macos – tap nickustinov/tap
 cask "home-assistant"
 
 
@@ -124,7 +128,6 @@ cask "onyx"
 cask "pearcleaner"
 cask "cleanupbuddy"
 cask "daisydisk"
-# brew "mole"  # neexistuje ako formula, existuje len ako cask "mole" no 404 – skútaj manuálne
 
 
 # ============================================
