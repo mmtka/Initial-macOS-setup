@@ -1,21 +1,15 @@
 # ============================================
-# Martin – macOS Setup (Homebrew Bundle)
+# Martin – macOS setup (Homebrew Bundle)
 # Source of truth: Brewfile
 # Install:  brew bundle --file Brewfile
 # Cleanup:  brew bundle cleanup --file Brewfile
 # ============================================
 
 # ---------- TAPS ----------
-tap "homebrew/bundle"
-tap "homebrew/cask-fonts"
+cask "wailbrew"
 tap "roshie548/tap"
 tap "slp/krun"
 tap "vitorgalvao/tiny-scripts"
-tap "geiserx/vpn-bypass"
-tap "jasine/tap"
-tap "srimanachanta/tap"
-tap "nickustinov/tap"
-
 
 # ============================================
 # CLI / BASIC
@@ -35,7 +29,7 @@ brew "dust"
 brew "midnight-commander"
 brew "duf"  # better df
 
-brew "dockutil"
+brew "dockutil" 
 brew "m-cli"
 
 brew "ripgrep"
@@ -52,6 +46,9 @@ brew "imagemagick"
 brew "ffmpeg"
 brew "bzip2"
 
+# Battery
+cask "srimanachanta/tap/stasis"
+
 # Bundle helpers
 brew "mas"
 brew "vitorgalvao/tiny-scripts/cask-repair"
@@ -62,19 +59,6 @@ brew "roshie548/tap/proxmux"
 # NTFS for MacOS
 cask "tuxera-ntfs"
 
-# System cleaner
-brew "mac-cleanup-go"
-brew "mole"  # github.com/tw93/Mole
-
-# macOS / FS
-cask "macfuse"
-
-# Battery menu bar
-cask "srimanachanta/tap/stasis"  # github.com/srimanachanta/Stasis
-
-# WailBrew (Wails GUI builder)
-cask "wailbrew"
-
 
 # ============================================
 # NETWORK / SECURITY (CLI)
@@ -83,18 +67,16 @@ brew "nmap"
 brew "mtr"
 brew "gping"
 brew "cfssl"
-brew "tcptraceroute"
+cask "rana-gmbh/netfluss/netfluss"  # showing real-time upload and download speeds across all active adapters
+# VPN Bypass start
+tap "geiserx/vpn-bypass"    # Add the tap (first time only)
+cask "vpn-bypass"   # Install VPN Bypass
+# VPN Bypass end
 brew "wakeonlan"
+cask "jasine/tap/netmounter"
 
-# Real-time bandwidth per adapter
-cask "rana-gmbh/netfluss/netfluss"  # github.com/rana-gmbh/netfluss
-
-# VPN Bypass
-cask "vpn-bypass"   # tap geiserx/vpn-bypass
-
-# NetMounter – github.com/jasine/net-mounter
-cask "netmounter"   # tap jasine/tap
-
+#https://bornexplorer.in/online-indicator/
+brew "tcptraceroute"
 
 # ============================================
 # MEDIA (CLI + GUI)
@@ -112,14 +94,13 @@ cask "mediainfoex"
 cask "tinymediamanager"
 cask "finetune"
 brew "yt-dlp"
-
+#https://github.com/jely2002/youtube-dl-gui
 
 # ============================================
 # SMART HOME
 # ============================================
-cask "itsytv"  # github.com/nickustinov/itsytv-macos – tap nickustinov/tap
+cask "nickustinov/tap/itsytv"
 cask "home-assistant"
-
 
 # ============================================
 # CLEANING / MAINTENANCE
@@ -128,13 +109,14 @@ cask "onyx"
 cask "pearcleaner"
 cask "cleanupbuddy"
 cask "daisydisk"
-
+brew "mole" # system cleaner
+brew "mac-cleanup-go"# system cleaner
 
 # ============================================
 # WORK WITH FILES / TERMINAL / SYNC
 # ============================================
-# cask "warp"    # odkomentuj ak chceš
-# cask "termius" # odkomentuj ak chceš
+# cask "warp"
+# cask "termius"
 cask "tabby"
 cask "cloudmounter"
 cask "keka"
@@ -143,7 +125,7 @@ cask "syncthing"
 cask "nextcloud-vfs"
 cask "syncthing-app"
 cask "transmission"
-
+#soulseek
 
 # ============================================
 # DESKTOP ENHANCEMENT
@@ -154,9 +136,9 @@ cask "domzilla-caffeine"
 cask "magicquit"
 cask "last-window-quits"
 cask "itsycal"  # menu bar calendar
-cask "thaw"     # menu bar management
-cask "launchie" # Launchpad
-
+cask "thaw"     # menu bar management tool; alternative to Bartender and fork from ICE by Jordan Baird
+cask "monuk7735/tap/mew-notch"  # Make the Mac Notch Actually Useful!
+cask "launchie" #Launchpad
 
 # ============================================
 # SECURITY / PRIVACY
@@ -168,25 +150,27 @@ cask "protonvpn"
 cask "lulu"
 brew "certbot"
 
-
 # ============================================
 # TOOLS
 # ============================================
 cask "mist"
 cask "balenaetcher"
+#cask "db-browser-for-sqlite"
 cask "deepl"
 cask "drawio"
 cask "espanso"
 cask "ganttproject"
 cask "openvisualtraceroute"
-cask "keyclu"
-cask "rsyncui"  # SwiftUI GUI for rsync
+cask "keyclu"   # applications shortcuts Shortcuts owerview via command key
+cask "rsyncui"  # A SwiftUI-based macOS GUI for rsync. 
+
+# macOS / FS
+cask "macfuse" 
 
 # Docker / virtualization
 cask "orbstack"
 
 # Wireshark
-cask "wireshark"
 cask "wireshark-app"
 
 # Adobe (heavy)
@@ -197,13 +181,11 @@ cask "font-ubuntu-sans"
 cask "font-ubuntu-sans-mono"
 cask "font-work-sans"
 
-
 # ============================================
 # BROWSERS
 # ============================================
 cask "firefox"
 cask "brave-browser"
-
 
 # ============================================
 # OFFICE / PRODUCTIVITY
@@ -215,9 +197,9 @@ cask "anki"
 # Microsoft Office
 cask "microsoft-auto-update"
 cask "microsoft-office"
-#cask "microsoft-word"
-#cask "microsoft-excel"
-#cask "microsoft-powerpoint"
+cask "microsoft-word"
+cask "microsoft-excel"
+cask "microsoft-powerpoint"
 
 # Mail
 cask "readdle-spark"
@@ -226,17 +208,15 @@ cask "readdle-spark"
 cask "wiso-steuer-2025"
 cask "wiso-steuer-2026"
 
-
 # ============================================
 # DEV TOOLS
 # ============================================
-cask "visual-studio-code"
-# cask "vscodium"  # open-source alternatíva
+cask "visual-studio-code" #MS Proprietär
+#cask "vscodium" #open-source
 cask "openinterminal"
 cask "imazing-profile-editor"
-# cask "pycharm"   # zakomentované — inštaluj manuálne ak treba (2026.1.2)
+cask "pycharm"
 cask "github"
-
 
 # ============================================
 # QUICKLOOK / INSPECTION
@@ -246,14 +226,76 @@ cask "apparency"
 cask "suspicious-package"
 cask "glance-chamburr"  # All-in-one Quick Look plugin
 
-
 # ============================================
 # TeX
 # ============================================
 cask "basictex"
 cask "texshop"
 
-
 # ============================================
 # MAS (App Store)
 # ============================================
+
+# Social
+mas "Telegram", id: 747648890
+mas "WhatsApp", id: 310633997
+
+# Safari extensions / web
+mas "1Password for Safari", id: 1569813296
+mas "Tampermonkey Classic", id: 1482490089
+mas "Obsidian Web Clipper", id: 6720708363
+
+# Geocaching
+mas "Raccoon - Geocaching Tool", id: 424398764
+mas "iCaching", id: 420484346
+
+# Utilities / work
+mas "Actions", id: 1586435171
+mas "Magnet", id: 441258766
+mas "Paste Plain Text", id: 1407015686
+mas "OwlOCR", id: 6462355119
+mas "Paprika Recipe Manager 3", id: 1303222628
+mas "finanzblick", id: 993109868
+mas "WireGuard", id: 1451685025
+mas "Home Assistant", id: 1099568401
+mas "Keepa - Price Tracker", id: 1533805339
+
+# Apple iWork
+mas "Pages", id: 409201541
+mas "Numbers", id: 409203825
+mas "Keynote", id: 409183694
+
+
+# ============================================
+# VS CODE EXTENSIONS
+# ============================================
+vscode "danielpinto8zz6.c-cpp-compile-run"
+vscode "davidbwaters.macos-modern-theme"
+vscode "dbaeumer.vscode-eslint"
+vscode "dzhavat.css-flexbox-cheatsheet"
+vscode "ecmel.vscode-html-css"
+vscode "editorconfig.editorconfig"
+vscode "golang.go"
+vscode "ms-azuretools.vscode-containers"
+vscode "ms-python.debugpy"
+vscode "ms-python.python"
+vscode "ms-python.vscode-pylance"
+vscode "ms-python.vscode-python-envs"
+vscode "ms-vscode-remote.remote-containers"
+vscode "ms-vscode.cmake-tools"
+vscode "ms-vscode.cpp-devtools"
+vscode "ms-vscode.cpptools"
+vscode "ms-vscode.cpptools-extension-pack"
+vscode "ms-vscode.cpptools-themes"
+vscode "openai.chatgpt"
+vscode "parallelsdesktop.parallels-desktop"
+vscode "pawelborkar.jellyfish"
+vscode "pdconsec.vscode-print"
+vscode "pinegrow.piny"
+vscode "ritwickdey.liveserver"
+vscode "sidthesloth.html5-boilerplate"
+vscode "wayou.vscode-todo-highlight"
+vscode "xdebug.php-debug"
+vscode "yutengjing.vscode-archive"
+vscode "zignd.html-css-class-completion"
+vscode "zobo.php-intellisense"

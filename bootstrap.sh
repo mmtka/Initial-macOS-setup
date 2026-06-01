@@ -4,150 +4,94 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BREWFILE="${REPO_DIR}/Brewfile"
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Colour helpers (safe — no-op if tput unavailable)
-# ─────────────────────────────────────────────────────────────────────────────
-bold=$(tput bold   2>/dev/null || true)
-reset=$(tput sgr0  2>/dev/null || true)
-cyan=$(tput setaf 6 2>/dev/null || true)
-green=$(tput setaf 2 2>/dev/null || true)
-yellow=$(tput setaf 3 2>/dev/null || true)
-red=$(tput setaf 1 2>/dev/null || true)
-
-step()  { echo; echo "${bold}${cyan}==>${reset}${bold} $*${reset}"; }
-ok()    { echo "${green}✓${reset} $*"; }
-warn()  { echo "${yellow}⚠${reset} $*"; }
-err()   { echo "${red}✗${reset} $*" >&2; }
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Progress tracker (total steps = 12)
-# ─────────────────────────────────────────────────────────────────────────────
-TOTAL_STEPS=12
-CURRENT_STEP=0
-
-progress() {
-  CURRENT_STEP=$(( CURRENT_STEP + 1 ))
-  echo
-  echo "${bold}${cyan}[${CURRENT_STEP}/${TOTAL_STEPS}]${reset}${bold} $*${reset}"
-  echo "${cyan}────────────────────────────────────────${reset}"
-}
-
-# ─────────────────────────────────────────────────────────────────────────────
 # Load configuration
-# ─────────────────────────────────────────────────────────────────────────────
 if [[ -f "${REPO_DIR}/config.sh" ]]; then
-  # shellcheck source=config.sh
   source "${REPO_DIR}/config.sh"
 else
-  warn "config.sh not found — using built-in defaults"
+  echo "⚠ config.sh not found, using defaults"
   CREATE_BACKUP=true
   ENABLE_POWER_DEFAULTS=true
   ENABLE_DOCK_LAYOUT=true
   AUTO_CLEANUP_BREW=true
 fi
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Logging — tee to both stdout and log file
-# ─────────────────────────────────────────────────────────────────────────────
+# Logging
 LOG_FILE="${HOME}/bootstrap-$(date +%Y%m%d-%H%M%S).log"
-DESKTOP_LOG="${HOME}/Desktop/bootstrap-report-$(date +%Y%m%d-%H%M%S).log"
 exec > >(tee -a "${LOG_FILE}") 2>&1
 
-echo
-echo "${bold}Bootstrap log:${reset} ${LOG_FILE}"
+echo "==> Bootstrap log: ${LOG_FILE}"
 echo
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Track failed items for the final report
-# ─────────────────────────────────────────────────────────────────────────────
-FAILED_ITEMS=()
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Load backup library
-# ─────────────────────────────────────────────────────────────────────────────
+# Load backup library if available
 if [[ -f "${REPO_DIR}/lib/backup.sh" ]]; then
-  # shellcheck source=lib/backup.sh
   source "${REPO_DIR}/lib/backup.sh"
 fi
 
-# ─────────────────────────────────────────────────────────────────────────────
-# PRE-BOOTSTRAP HOOK
-# ─────────────────────────────────────────────────────────────────────────────
+# Pre-bootstrap hook
 if [[ -f "${REPO_DIR}/hooks/pre-bootstrap.sh" ]]; then
-  step "Running pre-bootstrap hook"
+  echo "==> Running pre-bootstrap hook"
   bash "${REPO_DIR}/hooks/pre-bootstrap.sh" || {
-    err "Pre-bootstrap hook failed — aborting"
+    echo "ERROR: Pre-bootstrap hook failed"
     exit 1
   }
+  echo
 fi
 
-# ─────────────────────────────────────────────────────────────────────────────
-progress "Rosetta 2 (Apple Silicon only)"
-echo   "  Ensures x86_64 binaries can run on your Apple Silicon Mac."
-# ─────────────────────────────────────────────────────────────────────────────
+echo "==> 0) Rosetta (Apple Silicon only)"
 ARCH="$(uname -m)"
 if [[ "${ARCH}" == "arm64" ]]; then
   if /usr/bin/pgrep oahd >/dev/null 2>&1; then
-    ok "Rosetta 2 already installed"
+    echo "✓ Rosetta already installed"
   else
-    echo "  Installing Rosetta 2 — this is silent and fast..."
+    echo "Installing Rosetta..."
     /usr/sbin/softwareupdate --install-rosetta --agree-to-license || true
-    ok "Rosetta 2 installed"
   fi
 else
-  echo "  Intel Mac detected — Rosetta 2 not needed, skipping."
+  echo "Intel Mac detected, skipping Rosetta"
 fi
 
-# ─────────────────────────────────────────────────────────────────────────────
-progress "Xcode Command Line Tools"
-echo   "  Required by Homebrew, git, and most build tools."
-# ─────────────────────────────────────────────────────────────────────────────
+echo
+echo "==> 1) Xcode Command Line Tools (if needed)"
 if xcode-select -p >/dev/null 2>&1; then
-  ok "Xcode Command Line Tools already installed"
+  echo "✓ Xcode Command Line Tools already installed"
 else
-  echo "  Launching installer — a GUI dialog will appear."
+  echo "Installing Xcode Command Line Tools..."
   xcode-select --install || true
-  echo
-  warn "Complete the Xcode CLT installer dialog, then re-run this script."
+  echo "⚠ Complete the installer prompt, then re-run this script"
   exit 0
 fi
 
-# ─────────────────────────────────────────────────────────────────────────────
-progress "Homebrew"
-echo   "  The missing package manager for macOS."
-echo   "  All formulae, casks and MAS apps flow through it."
-# ─────────────────────────────────────────────────────────────────────────────
+echo
+echo "==> 2) Homebrew (if needed)"
 if command -v brew >/dev/null 2>&1; then
-  ok "Homebrew already installed"
+  echo "✓ Homebrew already installed"
 else
-  echo "  Downloading and installing Homebrew — may ask for sudo password."
+  echo "Installing Homebrew..."
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  ok "Homebrew installed"
 fi
 
-# Ensure brew is in PATH for Apple Silicon (needed immediately in the same session)
+# Ensure brew in PATH for Apple Silicon
 if [[ -x /opt/homebrew/bin/brew ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
-# ─────────────────────────────────────────────────────────────────────────────
-progress "Minimal zsh init"
-echo   "  Writing ~/.zprofile (login) and ~/.zshrc (interactive) if missing."
-echo   "  Existing custom config is left untouched — we only add what's needed."
-# ─────────────────────────────────────────────────────────────────────────────
+echo
+echo "==> 3) Minimal zsh init"
 ZPROFILE="${HOME}/.zprofile"
 ZSHRC="${HOME}/.zshrc"
 
+# Ensure .zprofile exists and contains brew shellenv exactly once
 if [[ ! -f "${ZPROFILE}" ]]; then
   cat > "${ZPROFILE}" <<'ZP'
-# ~/.zprofile — runs once per login session
+# ~/.zprofile
+# Login shell config (runs once per login)
 
 # Homebrew (Apple Silicon)
 if [[ -x /opt/homebrew/bin/brew ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 ZP
-  ok "Created ${ZPROFILE}"
+  echo "✓ Created ${ZPROFILE}"
 else
   if ! grep -q '/opt/homebrew/bin/brew shellenv' "${ZPROFILE}"; then
     cat >> "${ZPROFILE}" <<'ZP_ADD'
@@ -157,17 +101,19 @@ if [[ -x /opt/homebrew/bin/brew ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 ZP_ADD
-    ok "Updated ${ZPROFILE} with Homebrew PATH"
+    echo "✓ Updated ${ZPROFILE}"
   else
-    ok "${ZPROFILE} already configured"
+    echo "✓ ${ZPROFILE} already configured"
   fi
 fi
 
+# Ensure .zshrc exists with minimal sane defaults
 if [[ ! -f "${ZSHRC}" ]]; then
   cat > "${ZSHRC}" <<'ZR'
-# ~/.zshrc — runs for every interactive shell
+# ~/.zshrc
+# Interactive shell config
 
-# De-duplicate PATH entries
+# De-duplicate PATH entries (prevents PATH bloat)
 typeset -U path PATH
 
 # History
@@ -182,20 +128,21 @@ setopt SHARE_HISTORY
 autoload -Uz compinit
 compinit -u
 
-# Minimal prompt
+# Prompt (minimal)
 autoload -Uz colors && colors
 PROMPT='%F{cyan}%n@%m%f:%F{yellow}%~%f %# '
 
-# Handy aliases
+# Useful aliases
 alias ll='ls -lah'
 alias la='ls -A'
 alias l='ls -lah'
 ZR
-  ok "Created ${ZSHRC}"
+  echo "✓ Created ${ZSHRC}"
 else
   if ! grep -q '^typeset -U path PATH$' "${ZSHRC}"; then
     printf '\n# De-duplicate PATH entries\ntypeset -U path PATH\n' >> "${ZSHRC}"
   fi
+  
   if ! grep -q 'compinit' "${ZSHRC}"; then
     cat >> "${ZSHRC}" <<'ZR_ADD'
 
@@ -204,219 +151,127 @@ autoload -Uz compinit
 compinit -u
 ZR_ADD
   fi
-  ok "${ZSHRC} already configured"
+  echo "✓ ${ZSHRC} already configured"
 fi
 
-# ─────────────────────────────────────────────────────────────────────────────
-progress "Backup current system settings"
-echo   "  Exporting defaults domains to ${BACKUP_DIR:-~/.macos-setup-backups}"
-echo   "  so you can roll back any change made by this script."
-# ─────────────────────────────────────────────────────────────────────────────
-if [[ "${CREATE_BACKUP:-true}" == "true" ]]; then
-  if command -v create_backup >/dev/null 2>&1; then
-    create_backup
-  else
-    warn "Backup function not available (lib/backup.sh missing), skipping"
-  fi
+echo
+echo "==> 4) Backup current system settings"
+if command -v create_backup >/dev/null 2>&1; then
+  create_backup
 else
-  echo "  ℹ Backup disabled in config.sh — skipping."
+  echo "ℹ Backup function not available, skipping"
 fi
 
-# ─────────────────────────────────────────────────────────────────────────────
-progress "Mac App Store — login check"
-echo   "  MAS apps in the Brewfile require an App Store session."
-# ─────────────────────────────────────────────────────────────────────────────
+echo
+echo "==> 5) MAS (Mac App Store) login check"
+
+# Ensure mas is available early
 if ! command -v mas >/dev/null 2>&1; then
-  echo "  Installing 'mas' CLI..."
+  echo "Installing 'mas' (required for App Store apps)..."
   brew install mas
 fi
 
-# mas account output varies by version:
-#   older: prints Apple ID (contains @)
-#   newer: prints nothing or exits non-zero when not signed in,
-#          exits 0 and prints account info when signed in
-MAS_ACCOUNT="$(mas account 2>&1 || true)"
-if echo "${MAS_ACCOUNT}" | grep -qiE '@|apple id|signed in'; then
-  ok "Logged into App Store: ${MAS_ACCOUNT}"
+# Check MAS login status
+if mas account 2>/dev/null | grep -qi '@'; then
+  echo "✓ Logged into App Store ($(mas account 2>/dev/null))"
   MAS_READY=1
-elif [[ -z "${MAS_ACCOUNT}" ]] || echo "${MAS_ACCOUNT}" | grep -qi 'not signed\|not logged\|error'; then
-  warn "NOT logged into App Store"
-  echo "  MAS apps will be skipped during bundle install."
+else
+  echo "⚠ NOT logged into App Store"
+  echo "  MAS apps will be skipped during bundle install"
   echo "  To install them later:"
-  echo "    1. Open App Store.app and sign in"
+  echo "    1. Sign in via App Store.app"
   echo "    2. Run: brew bundle --file ${BREWFILE}"
   MAS_READY=0
-else
-  # mas returned something but doesn't match known patterns — assume logged in
-  ok "Logged into App Store (detected: ${MAS_ACCOUNT})"
-  MAS_READY=1
 fi
 
-# ─────────────────────────────────────────────────────────────────────────────
-progress "Install from Brewfile (brew bundle)"
-echo   "  Installing formulae, casks and MAS apps listed in Brewfile."
-echo   "  This is typically the longest step — grab a coffee ☕"
-# ─────────────────────────────────────────────────────────────────────────────
-echo "  Updating Homebrew first..."
+echo
+echo "==> 6) Install from Brewfile (brew bundle)"
+brew update
+brew bundle --file "${BREWFILE}"
 
-# Verbose brew so you see every formula/cask as it's processed
-set +e
-HOMEBREW_COLOR=1 brew bundle install --verbose --file "${BREWFILE}" 2>&1 | while IFS= read -r line; do
-  echo "  ${line}"
-  if [[ "${line}" == *"Error:"* ]] || [[ "${line}" == *"error:"* ]]; then
-    failed_item="$(echo "${line}" | sed 's/.*[Ee]rror: //')"
-    FAILED_ITEMS+=("${failed_item}")
-  fi
-done
-BREW_EXIT=${PIPESTATUS[0]}
-set -e
-
-if [[ ${BREW_EXIT} -ne 0 ]]; then
-  warn "brew bundle exited with errors (code ${BREW_EXIT})"
-  if [[ -t 0 ]]; then
-    printf "  Continue despite errors? [Y/n]: "
-    read -r answer
-    case "${answer}" in
-      [nN]) err "Bootstrap aborted by user."; exit 1 ;;
-      *)    echo "  Continuing..."; ;;
-    esac
-  else
-    echo "  Non-interactive mode — continuing automatically."
-  fi
+if [[ "${MAS_READY}" == "0" ]]; then
+  echo
+  echo "⚠ MAS apps were skipped (not logged into App Store)"
 fi
 
-[[ "${MAS_READY}" == "0" ]] && warn "MAS apps were skipped (not signed into App Store)"
-
-# ─────────────────────────────────────────────────────────────────────────────
+# Auto-cleanup orphaned packages
 if [[ "${AUTO_CLEANUP_BREW:-true}" == "true" ]]; then
-  progress "Cleanup orphaned Homebrew packages"
-  echo   "  Removing packages no longer listed in the Brewfile."
-  brew bundle cleanup --file "${BREWFILE}" --force || warn "Cleanup failed (non-critical)"
+  echo
+  echo "==> 7) Cleanup orphaned Homebrew packages"
+  brew bundle cleanup --file "${BREWFILE}" --force || echo "⚠ Cleanup failed (non-critical)"
 fi
 
-# ─────────────────────────────────────────────────────────────────────────────
-progress "macOS defaults — safe"
-echo   "  Applying sensible defaults: Finder, Dock, screenshots, locale…"
-echo   "  None of these changes require a restart."
-# ─────────────────────────────────────────────────────────────────────────────
+echo
+echo "==> 8) macOS defaults (safe)"
 if [[ -f "${REPO_DIR}/defaults/defaults.safe.sh" ]]; then
   bash "${REPO_DIR}/defaults/defaults.safe.sh"
-  ok "Safe defaults applied"
 else
-  warn "defaults/defaults.safe.sh not found, skipping"
+  echo "⚠ defaults.safe.sh not found, skipping"
 fi
 
-# ─────────────────────────────────────────────────────────────────────────────
 if [[ "${ENABLE_POWER_DEFAULTS:-true}" == "true" ]]; then
-  progress "macOS defaults — power (needs sudo)"
-  echo   "  Timezone, boot sound, power management, firewall…"
-  echo   "  Will prompt for sudo password."
+  echo
+  echo "==> 9) macOS defaults (power) - requires sudo"
   if [[ -f "${REPO_DIR}/defaults/defaults.power.sh" ]]; then
     bash "${REPO_DIR}/defaults/defaults.power.sh"
-    ok "Power defaults applied"
   else
-    warn "defaults/defaults.power.sh not found, skipping"
+    echo "⚠ defaults.power.sh not found, skipping"
   fi
 else
-  progress "macOS defaults — power"
-  echo   "  ℹ Power defaults disabled in config.sh — skipping."
+  echo
+  echo "ℹ Power defaults disabled in config.sh"
 fi
 
-# ─────────────────────────────────────────────────────────────────────────────
 if [[ "${ENABLE_DOCK_LAYOUT:-true}" == "true" ]]; then
-  progress "Dock layout"
-  echo   "  Arranging your Dock via dockutil — best effort, non-fatal."
+  echo
+  echo "==> 10) Dock layout (dockutil) - best effort"
   if [[ -f "${REPO_DIR}/dock/layout.sh" ]]; then
-    bash "${REPO_DIR}/dock/layout.sh" || warn "Dock layout failed (non-critical)"
+    bash "${REPO_DIR}/dock/layout.sh" || echo "⚠ Dock layout failed (non-critical)"
   else
-    warn "dock/layout.sh not found, skipping"
+    echo "⚠ dock/layout.sh not found, skipping"
   fi
 else
-  progress "Dock layout"
-  echo   "  ℹ Dock layout disabled in config.sh — skipping."
+  echo
+  echo "ℹ Dock layout disabled in config.sh"
 fi
 
-# ─────────────────────────────────────────────────────────────────────────────
-progress "Apply changes (restart Finder, Dock, SystemUIServer)"
-echo   "  Bouncing system processes so all defaults take effect immediately."
-# ─────────────────────────────────────────────────────────────────────────────
+echo
+echo "==> 11) Apply changes"
 if [[ -f "${REPO_DIR}/defaults/apply.sh" ]]; then
   bash "${REPO_DIR}/defaults/apply.sh"
-  ok "System processes restarted"
 else
-  warn "defaults/apply.sh not found, skipping"
+  echo "⚠ defaults/apply.sh not found, skipping"
 fi
 
-# ─────────────────────────────────────────────────────────────────────────────
-# POST-BOOTSTRAP HOOK
-# ─────────────────────────────────────────────────────────────────────────────
+# Post-bootstrap hook
 if [[ -f "${REPO_DIR}/hooks/post-bootstrap.sh" ]]; then
-  progress "Post-bootstrap hook"
-  bash "${REPO_DIR}/hooks/post-bootstrap.sh" || warn "Post-bootstrap hook failed (non-critical)"
-fi
-
-# ─────────────────────────────────────────────────────────────────────────────
-progress "Generating desktop report"
-echo   "  Writing a summary of what was installed (and what failed) to your Desktop."
-# ─────────────────────────────────────────────────────────────────────────────
-{
-  echo "=== Bootstrap Report — $(date '+%Y-%m-%d %H:%M:%S') ==="
-  echo "Log file : ${LOG_FILE}"
   echo
-
-  if [[ ${#FAILED_ITEMS[@]} -eq 0 ]]; then
-    echo "✓ All items installed successfully — no failures."
-  else
-    echo "✗ Items that FAILED to install (install manually):"
-    echo
-    for item in "${FAILED_ITEMS[@]}"; do
-      echo "  - ${item}"
-    done
-    echo
-    echo "Help: https://github.com/mmtka/Initial-macOS-setup/blob/main/FAQ.md"
-  fi
-
-  if [[ "${MAS_READY:-0}" == "0" ]]; then
-    echo
-    echo "⚠ App Store (MAS) apps were skipped — you were not signed in."
-    echo "  After signing in run: brew bundle --file ${BREWFILE}"
-  fi
-} > "${DESKTOP_LOG}"
-
-if [[ ${#FAILED_ITEMS[@]} -gt 0 ]]; then
-  warn "Report with failures saved to: ${DESKTOP_LOG}"
-else
-  ok "No failures — report saved to: ${DESKTOP_LOG}"
+  echo "==> Running post-bootstrap hook"
+  bash "${REPO_DIR}/hooks/post-bootstrap.sh" || echo "⚠ Post-bootstrap hook failed (non-critical)"
 fi
 
-# ─────────────────────────────────────────────────────────────────────────────
-# FINAL SUMMARY
-# ─────────────────────────────────────────────────────────────────────────────
 echo
-echo "${bold}${green}╔══════════════════════════════════════════════╗${reset}"
-echo "${bold}${green}║          Bootstrap complete!                 ║${reset}"
-echo "${bold}${green}╚══════════════════════════════════════════════╝${reset}"
+echo "==> DONE"
 echo
-echo "  ${green}✓${reset} Homebrew packages processed"
-echo "  ${green}✓${reset} macOS defaults configured"
-echo "  ${green}✓${reset} zsh initialised"
-
-if [[ "${MAS_READY:-0}" == "0" ]]; then
-  echo "  ${yellow}⚠${reset} MAS apps skipped — sign in to App Store, then: brew bundle"
+echo "Summary:"
+echo "  ✓ Homebrew packages installed"
+echo "  ✓ macOS defaults configured"
+echo "  ✓ zsh configured"
+if [[ "${MAS_READY}" == "0" ]]; then
+  echo "  ⚠ MAS apps skipped (sign into App Store and re-run: brew bundle)"
 fi
-
+if [[ "${CREATE_BACKUP:-true}" == "true" ]] && [[ -d "${BACKUP_DIR:-${HOME}/.macos-setup-backups}" ]]; then
+  LATEST_BACKUP=$(ls -t "${BACKUP_DIR:-${HOME}/.macos-setup-backups}" 2>/dev/null | head -1)
+  if [[ -n "$LATEST_BACKUP" ]]; then
+    echo "  ✓ Backup created: ${BACKUP_DIR:-${HOME}/.macos-setup-backups}/${LATEST_BACKUP}"
+  fi
+fi
+echo
+echo "Notes:"
+echo "  - Full log saved to: ${LOG_FILE}"
+echo "  - Some changes require logout/reboot"
+echo "  - New zsh settings: open new terminal or run 'exec zsh'"
 if [[ "${CREATE_BACKUP:-true}" == "true" ]]; then
-  LATEST_BACKUP=$(ls -t "${BACKUP_DIR:-${HOME}/.macos-setup-backups}" 2>/dev/null | head -1 || true)
-  [[ -n "${LATEST_BACKUP}" ]] && echo "  ${green}✓${reset} Backup: ${BACKUP_DIR:-${HOME}/.macos-setup-backups}/${LATEST_BACKUP}"
+  echo "  - To restore backup: source lib/backup.sh && restore_backup <path>"
 fi
-
-echo
-echo "  ${bold}Full log    :${reset} ${LOG_FILE}"
-echo "  ${bold}Desktop report:${reset} ${DESKTOP_LOG}"
-echo
-echo "  Notes:"
-echo "    • Some changes require a logout or restart to fully apply."
-echo "    • Open a new terminal (or run 'exec zsh') to pick up zsh changes."
-[[ "${CREATE_BACKUP:-true}" == "true" ]] && \
-  echo "    • To restore backup: source lib/backup.sh && restore_backup <path>"
 echo
