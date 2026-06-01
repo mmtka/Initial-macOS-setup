@@ -6,7 +6,6 @@
 # ============================================
 
 # ---------- TAPS ----------
-cask "wailbrew"
 tap "roshie548/tap"
 tap "slp/krun"
 tap "vitorgalvao/tiny-scripts"
@@ -110,7 +109,7 @@ cask "pearcleaner"
 cask "cleanupbuddy"
 cask "daisydisk"
 brew "mole" # system cleaner
-brew "mac-cleanup-go"# system cleaner
+brew "mac-cleanup-go" # system cleaner
 
 # ============================================
 # WORK WITH FILES / TERMINAL / SYNC
@@ -211,8 +210,9 @@ cask "wiso-steuer-2026"
 # ============================================
 # DEV TOOLS
 # ============================================
-cask "visual-studio-code" #MS Proprietär
+cask "visual-studio-code" # MS Proprietär
 #cask "vscodium" #open-source
+cask "wailbrew"
 cask "openinterminal"
 cask "imazing-profile-editor"
 cask "pycharm"

@@ -37,12 +37,8 @@ cd Initial-macOS-setup
 cp profiles/minimal.Brewfile Brewfile
 ./bootstrap.sh
 
-# Work setup (development tools)
-cp profiles/work.Brewfile Brewfile
-./bootstrap.sh
-
-# Full setup (everything)
-cp Brewfile.bak Brewfile  # restore original
+# Full setup (restore original Brewfile)
+cp Brewfile.repo.bak Brewfile
 ./bootstrap.sh
 ```
 
@@ -129,12 +125,11 @@ git clone https://github.com/yourusername/dotfiles ~/.dotfiles
 
 ## Profiles
 
-Three installation profiles are available:
+Two installation profiles are available:
 
 | Profile | Description | Size | Use Case |
 |---------|-------------|------|----------|
 | **minimal** | Essentials only | ~500MB | Testing, VM, minimal setup |
-| **work** | Development tools | ~2GB | Work machines, development |
 | **full** | Everything | ~10GB | Primary personal machine |
 
 Switch profiles by copying the desired Brewfile:
@@ -169,8 +164,7 @@ cp profiles/minimal.Brewfile Brewfile
 │   ├── pre-bootstrap.sh  # Pre-setup hook
 │   └── post-bootstrap.sh # Post-setup hook
 ├── profiles/
-│   ├── minimal.Brewfile  # Minimal profile
-│   └── work.Brewfile     # Work profile
+│   └── minimal.Brewfile  # Minimal profile
 └── .github/
     └── workflows/
         └── validate.yml  # CI/CD validation
