@@ -163,7 +163,7 @@ else
 fi
 
 echo
-echo "==> 5) MAS (Mac App Store) login check"
+echo "==> 5) Mac App Store (MAS) sign-in"
 
 # Ensure mas is available early
 if ! command -v mas >/dev/null 2>&1; then
@@ -171,28 +171,33 @@ if ! command -v mas >/dev/null 2>&1; then
   brew install mas
 fi
 
-# Check MAS login status
-if mas account 2>/dev/null | grep -qi '@'; then
-  echo "✓ Logged into App Store ($(mas account 2>/dev/null))"
-  MAS_READY=1
+# NOTE: mas 7.x removed the `account` and `signin` subcommands (Apple dropped the
+# underlying private API). There is no reliable CLI way to query sign-in state or
+# to sign in from the terminal, so we open the App Store and let the user sign in
+# interactively before bundling. brew bundle then installs via `mas install || mas get`.
+MAS_COUNT=$(grep -cE '^[[:space:]]*mas[[:space:]]' "${BREWFILE}" 2>/dev/null || true)
+MAS_COUNT=${MAS_COUNT:-0}
+
+if [[ "${MAS_COUNT}" -gt 0 ]]; then
+  echo "ℹ Brewfile lists ${MAS_COUNT} App Store app(s)."
+  echo "  These can only install while you are signed into the App Store."
+  open -a "App Store" >/dev/null 2>&1 || true
+  if [[ -r /dev/tty ]]; then
+    printf "  → Sign into the App Store, then press Enter to continue (Ctrl-C to abort)... "
+    read -r _ </dev/tty || true
+  else
+    echo "  (non-interactive run; make sure you are already signed in)"
+  fi
 else
-  echo "⚠ NOT logged into App Store"
-  echo "  MAS apps will be skipped during bundle install"
-  echo "  To install them later:"
-  echo "    1. Sign in via App Store.app"
-  echo "    2. Run: brew bundle --file ${BREWFILE}"
-  MAS_READY=0
+  echo "ℹ No App Store apps in Brewfile; nothing to sign in for."
 fi
 
 echo
 echo "==> 6) Install from Brewfile (brew bundle)"
 brew update
-brew bundle --file "${BREWFILE}"
-
-if [[ "${MAS_READY}" == "0" ]]; then
-  echo
-  echo "⚠ MAS apps were skipped (not logged into App Store)"
-fi
+# Non-fatal: a single region-locked / unavailable entry must not abort the whole run.
+brew bundle --file "${BREWFILE}" --verbose \
+  || echo "⚠ Some Brewfile entries failed to install (see output above) — continuing"
 
 # Auto-cleanup orphaned packages
 if [[ "${AUTO_CLEANUP_BREW:-true}" == "true" ]]; then
@@ -257,8 +262,9 @@ echo "Summary:"
 echo "  ✓ Homebrew packages installed"
 echo "  ✓ macOS defaults configured"
 echo "  ✓ zsh configured"
-if [[ "${MAS_READY}" == "0" ]]; then
-  echo "  ⚠ MAS apps skipped (sign into App Store and re-run: brew bundle)"
+if [[ "${MAS_COUNT:-0}" -gt 0 ]]; then
+  echo "  ℹ If any App Store apps are missing, sign into App Store.app and re-run:"
+  echo "      brew bundle --file ${BREWFILE}"
 fi
 if [[ "${CREATE_BACKUP:-true}" == "true" ]] && [[ -d "${BACKUP_DIR:-${HOME}/.macos-setup-backups}" ]]; then
   LATEST_BACKUP=$(ls -t "${BACKUP_DIR:-${HOME}/.macos-setup-backups}" 2>/dev/null | head -1)
