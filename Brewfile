@@ -215,9 +215,9 @@ cask "anki"
 # Microsoft Office
 cask "microsoft-auto-update"
 cask "microsoft-office"
-cask "microsoft-word"
-cask "microsoft-excel"
-cask "microsoft-powerpoint"
+#cask "microsoft-word"
+#cask "microsoft-excel"
+#cask "microsoft-powerpoint"
 
 # Mail
 cask "readdle-spark"
