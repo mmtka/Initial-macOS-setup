@@ -19,6 +19,10 @@ export ENABLE_POWER_DEFAULTS=true
 export ENABLE_DOCK_LAYOUT=true
 export AUTO_CLEANUP_BREW=true
 
+# Enable Touch ID for sudo so the single admin prompt at the start uses your
+# fingerprint instead of a typed password (macOS 14+). Survives macOS updates.
+export ENABLE_TOUCHID_SUDO=true
+
 # Backup settings
 export CREATE_BACKUP=true
 export BACKUP_DIR="${HOME}/.macos-setup-backups"

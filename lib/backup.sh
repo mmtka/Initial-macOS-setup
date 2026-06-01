@@ -57,7 +57,7 @@ Hostname: $(hostname)
 User: ${USER}
 
 Contents:
-$(ls -1 "${BACKUP_PATH}" | grep -v MANIFEST)
+$(find "${BACKUP_PATH}" -maxdepth 1 -mindepth 1 -not -name 'MANIFEST*' -exec basename {} \;)
 
 To restore a specific domain:
   defaults import <domain> <path-to-plist>
@@ -67,7 +67,7 @@ Example:
 EOF
 
   echo "✓ Backup created: ${BACKUP_PATH}"
-  echo "  Files: $(ls -1 "${BACKUP_PATH}" | wc -l | tr -d ' ')"
+  echo "  Files: $(find "${BACKUP_PATH}" -maxdepth 1 -mindepth 1 | wc -l | tr -d ' ')"
   echo
 }
 
@@ -83,7 +83,8 @@ restore_backup() {
   
   for plist in "${backup_path}"/*.plist; do
     if [[ -f "${plist}" ]]; then
-      local domain=$(basename "${plist}" .plist)
+      local domain
+      domain=$(basename "${plist}" .plist)
       echo "  Restoring ${domain}..."
       defaults import "${domain}" "${plist}" 2>/dev/null || echo "    ⚠ Failed to restore ${domain}"
     fi
@@ -107,8 +108,9 @@ list_backups() {
   for backup in "${BACKUP_DIR}"/*/; do
     if [[ -d "${backup}" ]]; then
       count=$((count + 1))
-      local backup_name=$(basename "${backup}")
-      local file_count=$(ls -1 "${backup}" 2>/dev/null | wc -l | tr -d ' ')
+      local backup_name file_count
+      backup_name=$(basename "${backup}")
+      file_count=$(find "${backup}" -maxdepth 1 -mindepth 1 2>/dev/null | wc -l | tr -d ' ')
       echo "  ${count}. ${backup_name} (${file_count} files)"
     fi
   done

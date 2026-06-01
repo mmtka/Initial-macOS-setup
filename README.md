@@ -72,8 +72,13 @@ export BACKUP_DIR="${HOME}/.macos-setup-backups"
 
 ## What Will Prompt You
 
-- **macOS user password (sudo)** – yes, required for system changes
-- **Mac App Store login** – yes, guided by script (for MAS apps)
+- **macOS administrator access** – once, near the start. The script enables
+  **Touch ID for `sudo`** first, so you authenticate with your fingerprint and
+  the session is kept alive for the whole run (no repeated prompts). The very
+  first time, a typed password is still needed once to enable Touch ID; set
+  `ENABLE_TOUCHID_SUDO=false` in `config.sh` to keep typing the password.
+- **Mac App Store login** – the script opens App Store.app and waits for you to
+  sign in (modern `mas` cannot sign in from the terminal).
 - **iCloud credentials** – never
 
 ## Backup & Restore

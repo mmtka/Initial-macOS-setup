@@ -13,6 +13,7 @@ else
   ENABLE_POWER_DEFAULTS=true
   ENABLE_DOCK_LAYOUT=true
   AUTO_CLEANUP_BREW=true
+  ENABLE_TOUCHID_SUDO=true
 fi
 
 # Logging
@@ -60,6 +61,39 @@ else
   echo "⚠ Complete the installer prompt, then re-run this script"
   exit 0
 fi
+
+# -----------------------------------------------------------------------------
+# Administrator access — Touch ID + single prompt for the whole run.
+# Placed here (after the CLT check that may exit) so we never ask before we are
+# sure the run continues. Homebrew and the macOS defaults below all need sudo.
+# -----------------------------------------------------------------------------
+echo
+echo "==> 1.5) Administrator access (Touch ID + single prompt)"
+
+# Enable Touch ID for sudo via the update-safe drop-in (macOS 14+). Needs a typed
+# password the very first time only; afterwards sudo accepts Touch ID.
+if [[ "${ENABLE_TOUCHID_SUDO:-true}" == "true" ]]; then
+  if [[ -f /etc/pam.d/sudo_local ]] && \
+     grep -qE '^auth[[:space:]]+sufficient[[:space:]]+pam_tid\.so' /etc/pam.d/sudo_local; then
+    echo "✓ Touch ID for sudo already enabled"
+  elif [[ -f /etc/pam.d/sudo_local.template ]]; then
+    echo "Enabling Touch ID for sudo (password required this once)..."
+    sed 's/^#\(auth[[:space:]].*pam_tid\.so\)/\1/' /etc/pam.d/sudo_local.template \
+      | sudo tee /etc/pam.d/sudo_local >/dev/null
+    echo "✓ Touch ID for sudo enabled"
+  else
+    echo "ℹ Touch ID drop-in not available on this macOS; sudo will use a password"
+  fi
+fi
+
+# Prime sudo once (Touch ID if enabled above), then keep the timestamp warm in the
+# background so no further prompts appear for the rest of the run.
+echo "Authenticating for administrator tasks..."
+sudo -v
+( while true; do sudo -n true 2>/dev/null || true; sleep 60; kill -0 "$$" 2>/dev/null || exit; done ) &
+SUDO_KEEPALIVE_PID=$!
+trap 'kill "${SUDO_KEEPALIVE_PID}" 2>/dev/null || true' EXIT
+echo "✓ Administrator access granted for this session"
 
 echo
 echo "==> 2) Homebrew (if needed)"
@@ -267,6 +301,8 @@ if [[ "${MAS_COUNT:-0}" -gt 0 ]]; then
   echo "      brew bundle --file ${BREWFILE}"
 fi
 if [[ "${CREATE_BACKUP:-true}" == "true" ]] && [[ -d "${BACKUP_DIR:-${HOME}/.macos-setup-backups}" ]]; then
+  # Backup dirs are timestamp-named (e.g. 20260119-173000), so ls -t is safe here.
+  # shellcheck disable=SC2012
   LATEST_BACKUP=$(ls -t "${BACKUP_DIR:-${HOME}/.macos-setup-backups}" 2>/dev/null | head -1)
   if [[ -n "$LATEST_BACKUP" ]]; then
     echo "  ✓ Backup created: ${BACKUP_DIR:-${HOME}/.macos-setup-backups}/${LATEST_BACKUP}"

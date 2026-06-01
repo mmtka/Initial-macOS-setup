@@ -43,7 +43,8 @@ add_app() {
 find_adobe_app() {
   local app_name="$1"
   # Search for Adobe apps dynamically (version-independent)
-  local found=$(find /Applications -maxdepth 2 -name "${app_name}*.app" -type d 2>/dev/null | head -1)
+  local found
+  found=$(find /Applications -maxdepth 2 -name "${app_name}*.app" -type d 2>/dev/null | head -1)
   if [[ -n "$found" ]]; then
     echo "$found"
   fi
@@ -53,7 +54,8 @@ add_adobe_app() {
   local search_name="$1"
   local fallback_path="${2:-}"
   
-  local app_path=$(find_adobe_app "$search_name")
+  local app_path
+  app_path=$(find_adobe_app "$search_name")
   
   if [[ -n "$app_path" ]]; then
     dockutil --add "$app_path" --no-restart >/dev/null
