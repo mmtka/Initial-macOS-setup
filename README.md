@@ -4,10 +4,12 @@ Opinionated, reproducible macOS bootstrap for power users with advanced configur
 
 ## Features
 
+✓ **Interactive TUI** – `tui.sh` (powered by `gum`) to pick what runs  
 ✓ **One-command setup** – Complete macOS configuration in minutes  
 ✓ **Configurable** – Customize via `config.sh` without editing scripts  
 ✓ **Backup & Restore** – Automatic backup before changes  
 ✓ **Profile System** – Minimal, work, or full installation profiles  
+✓ **Configuration-profile handling** – Installs `.mobileconfig` profiles and removes conflicting ones so `defaults write` actually sticks  
 ✓ **Idempotent** – Safe to run multiple times  
 ✓ **CI/CD Validated** – Automated testing via GitHub Actions  
 ✓ **Hook System** – Pre/post-bootstrap customization  
@@ -18,11 +20,26 @@ Opinionated, reproducible macOS bootstrap for power users with advanced configur
 - **macOS system defaults** (Finder, Dock, keyboard, etc.)
 - **Dock layout** (via dockutil)
 - **zsh configuration** (minimal, sane defaults)
+- **Configuration profiles** (`.mobileconfig`) — e.g. `gatekeeper.mobileconfig`
+  to disable Gatekeeper assessment (the only way on macOS 26)
 - **Rosetta 2** (Apple Silicon only)
 
 ## Quick Start
 
-### Standard Installation
+### Interactive (recommended)
+
+```bash
+git clone https://github.com/mmtka/Initial-macOS-setup.git
+cd Initial-macOS-setup
+./tui.sh
+```
+
+`tui.sh` is a friendly front-end (powered by [`gum`](https://github.com/charmbracelet/gum),
+which it installs for you): pick a Brewfile profile, toggle which steps run, and
+choose which configuration profiles to install — then it hands off to
+`bootstrap.sh`. No `gum`? It falls back to plain prompts.
+
+### Standard (non-interactive) Installation
 
 ```bash
 git clone https://github.com/mmtka/Initial-macOS-setup.git
@@ -65,10 +82,18 @@ export ENABLE_DOCK_LAYOUT=true
 export AUTO_CLEANUP_BREW=true
 export CREATE_BACKUP=true
 
+# Configuration profiles
+export ENABLE_PROFILES=true                # install non-conflicting .mobileconfig
+export REMOVE_CONFLICTING_PROFILES=true    # remove profiles that override defaults write
+# export PROFILES_DIR="/path/to/your/profiles"   # default: profiles/mobileconfig
+
 # Paths
 export SCREENSHOT_DIR="${HOME}/Screenshots"
 export BACKUP_DIR="${HOME}/.macos-setup-backups"
 ```
+
+> Every flag uses the `${VAR:-default}` form, so `tui.sh` (or any environment
+> variable) can override it without editing `config.sh`.
 
 ## What Will Prompt You
 
@@ -143,6 +168,42 @@ Switch profiles by copying the desired Brewfile:
 cp profiles/minimal.Brewfile Brewfile
 ```
 
+## Configuration Profiles (`.mobileconfig`)
+
+Drop `.mobileconfig` files into `profiles/mobileconfig/` or point `PROFILES_DIR`
+at another folder (e.g. a NAS). `tui.sh` / `bootstrap.sh` auto-discover them.
+Your own profiles are git-ignored by default (they may hold personal data); only
+`gatekeeper.mobileconfig` is tracked, because it's needed to disable Gatekeeper
+on a fresh machine.
+
+> **macOS 26+**: Apple removed silent `profiles install`. Each profile is
+> `open`ed and you approve it in **System Settings ▸ General ▸ Device Management**.
+
+### Scripts win — why Finder `defaults write` may "not work"
+
+A managed profile sets preferences with `mcxdomain = always`, which **silently
+overrides `defaults write`**. So if a Finder profile is installed, changing
+`FINDER_VIEW_STYLE` in `config.sh` does nothing — the profile keeps winning.
+
+This repo treats the **shell scripts as the source of truth**:
+
+- Profiles that manage a domain a script also sets (Finder, Dock, Safari, global
+  prefs) are **never installed** and their already-installed copies are
+  **removed** before defaults are applied (`REMOVE_CONFLICTING_PROFILES=true`,
+  uses sudo). The removal is surgical — only profiles touching those domains are
+  removed; unrelated profiles (Wi-Fi, VPN, Gatekeeper) are left alone.
+- Use profiles only for things the scripts can't express (e.g. **AdGuard DNS**,
+  `com.apple.dnsSettings`).
+
+### The Gatekeeper exception (macOS 26 / Tahoe)
+
+Disabling Gatekeeper assessment is the **one place a profile wins on purpose**.
+Apple removed `spctl --master-disable` in macOS 26, so it can *only* be set via a
+profile (`com.apple.systempolicy.control` → `EnableAssessment = false`).
+`profiles/mobileconfig/gatekeeper.mobileconfig` therefore owns Gatekeeper +
+Software Update: it is **installed and kept** (not treated as a conflict, not
+removed). Delete that file if you want Gatekeeper to stay fully enabled.
+
 ## Documentation
 
 - **[INSTALL.md](INSTALL.md)** – Installation instructions & one-liner
@@ -154,6 +215,7 @@ cp profiles/minimal.Brewfile Brewfile
 
 ```
 .
+├── tui.sh                # Interactive front-end (gum) → bootstrap.sh
 ├── bootstrap.sh          # Main setup script
 ├── config.sh             # User configuration
 ├── Brewfile              # Full package list
@@ -164,12 +226,14 @@ cp profiles/minimal.Brewfile Brewfile
 ├── dock/
 │   └── layout.sh         # Dock configuration
 ├── lib/
-│   └── backup.sh         # Backup/restore functions
+│   ├── backup.sh         # Backup/restore functions
+│   └── profiles.sh       # .mobileconfig discovery / conflict handling
 ├── hooks/
 │   ├── pre-bootstrap.sh  # Pre-setup hook
 │   └── post-bootstrap.sh # Post-setup hook
 ├── profiles/
-│   └── minimal.Brewfile  # Minimal profile
+│   ├── minimal.Brewfile  # Minimal profile
+│   └── mobileconfig/     # .mobileconfig profiles (gatekeeper tracked; rest git-ignored)
 └── .github/
     └── workflows/
         └── validate.yml  # CI/CD validation

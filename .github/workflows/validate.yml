@@ -42,6 +42,15 @@ jobs:
           }
           echo "✓ bootstrap.sh passed shellcheck"
 
+      - name: Shellcheck - tui.sh
+        run: |
+          echo "==> Running shellcheck on tui.sh"
+          shellcheck -x tui.sh || {
+            echo "ERROR: shellcheck failed on tui.sh"
+            exit 1
+          }
+          echo "✓ tui.sh passed shellcheck"
+
       - name: Shellcheck - install.sh
         run: |
           echo "==> Running shellcheck on install.sh"
@@ -63,7 +72,7 @@ jobs:
       - name: Shellcheck - defaults scripts
         run: |
           echo "==> Running shellcheck on defaults/*.sh"
-          shellcheck defaults/*.sh || {
+          shellcheck -x defaults/*.sh || {
             echo "ERROR: shellcheck failed on defaults scripts"
             exit 1
           }
@@ -72,7 +81,7 @@ jobs:
       - name: Shellcheck - dock scripts
         run: |
           echo "==> Running shellcheck on dock/*.sh"
-          shellcheck dock/*.sh || {
+          shellcheck -x dock/*.sh || {
             echo "ERROR: shellcheck failed on dock scripts"
             exit 1
           }
@@ -81,7 +90,7 @@ jobs:
       - name: Shellcheck - lib scripts
         run: |
           echo "==> Running shellcheck on lib/*.sh"
-          shellcheck lib/*.sh || {
+          shellcheck -x lib/*.sh || {
             echo "ERROR: shellcheck failed on lib scripts"
             exit 1
           }

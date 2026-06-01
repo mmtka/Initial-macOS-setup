@@ -39,12 +39,17 @@ git clone https://github.com/mmtka/Initial-macOS-setup.git "${TMP_DIR}"
 ok "Repo cloned to ${TMP_DIR}"
 
 cd "${TMP_DIR}"
-chmod +x bootstrap.sh
+chmod +x bootstrap.sh tui.sh 2>/dev/null || chmod +x bootstrap.sh
 
 # ─────────────────────────────────────────────────────────────────────────────
-step "Handing off to bootstrap.sh"
-echo "  From here on, bootstrap.sh drives the installation."
+step "Launching the interactive installer (tui.sh)"
+echo "  tui.sh lets you choose what to install, then hands off to bootstrap.sh."
 echo "  A full log will be written to ~/bootstrap-<timestamp>.log"
 echo
 
-exec ./bootstrap.sh
+# Prefer the TUI; fall back to bootstrap.sh if it is missing for any reason.
+if [[ -f tui.sh ]]; then
+  exec ./tui.sh
+else
+  exec ./bootstrap.sh
+fi

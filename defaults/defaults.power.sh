@@ -27,6 +27,11 @@ else
   echo "✓ Gatekeeper quarantine remains enabled (recommended)"
 fi
 
+# NOTE: Gatekeeper assessment (EnableAssessment=false) is NOT set here. macOS 26
+# (Tahoe) removed `spctl --master-disable`, so it can only be disabled via a
+# configuration profile — see profiles/mobileconfig/gatekeeper.mobileconfig,
+# which the installer keeps installed for exactly this purpose.
+
 # Fn key behavior (1 = Emoji & Symbols on many macOS versions)
 defaults write com.apple.HIToolbox AppleFnUsageType -int 1
 

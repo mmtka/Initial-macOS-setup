@@ -2,6 +2,7 @@
 
 ```
 Initial-macOS-setup/
+├── tui.sh                 # Interactive front-end (gum) → bootstrap.sh
 ├── bootstrap.sh           # Main setup script
 ├── install.sh             # One-liner installer
 ├── config.sh              # User configuration
@@ -16,7 +17,8 @@ Initial-macOS-setup/
 │   └── layout.sh          # Dock layout with dynamic Adobe detection
 │
 ├── lib/                   # Shared libraries
-│   └── backup.sh          # Backup/restore functions
+│   ├── backup.sh          # Backup/restore functions
+│   └── profiles.sh        # .mobileconfig discovery / conflict handling
 │
 ├── hooks/                 # Customization hooks
 │   ├── pre-bootstrap.sh   # Pre-setup checks
@@ -24,7 +26,8 @@ Initial-macOS-setup/
 │
 ├── profiles/              # Installation profiles
 │   ├── minimal.Brewfile   # Essentials only (~500MB)
-│   └── work.Brewfile      # Development setup (~2GB)
+│   ├── work.Brewfile      # Development setup (~2GB)
+│   └── mobileconfig/      # Your .mobileconfig profiles (git-ignored)
 │
 ├── .github/
 │   └── workflows/

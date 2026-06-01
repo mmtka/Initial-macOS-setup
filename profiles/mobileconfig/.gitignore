@@ -1,0 +1,9 @@
+# Configuration profiles often contain personal data (DNS tokens, device names,
+# signing certs). Keep them OUT of the repo — drop your own .mobileconfig files
+# here locally and the setup will auto-discover them.
+*.mobileconfig
+!.gitignore
+!README.md
+# Exception: gatekeeper.mobileconfig is tracked — it's needed to disable
+# Gatekeeper on a fresh machine (macOS 26 has no CLI way) and holds no secrets.
+!gatekeeper.mobileconfig

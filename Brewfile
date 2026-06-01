@@ -28,8 +28,9 @@ brew "dust"
 brew "midnight-commander"
 brew "duf"  # better df
 
-brew "dockutil" 
+brew "dockutil"
 brew "m-cli"
+brew "gum"  # TUI toolkit used by tui.sh
 
 brew "ripgrep"
 brew "cronboard"

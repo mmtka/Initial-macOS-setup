@@ -2,7 +2,8 @@
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BREWFILE="${REPO_DIR}/Brewfile"
+# BREWFILE may be overridden from the environment (e.g. by tui.sh for Minimal).
+BREWFILE="${BREWFILE:-${REPO_DIR}/Brewfile}"
 
 # Load configuration
 if [[ -f "${REPO_DIR}/config.sh" ]]; then
@@ -10,11 +11,18 @@ if [[ -f "${REPO_DIR}/config.sh" ]]; then
 else
   echo "⚠ config.sh not found, using defaults"
   CREATE_BACKUP=true
+  ENABLE_HOMEBREW=true
+  ENABLE_DEFAULTS_SAFE=true
   ENABLE_POWER_DEFAULTS=true
   ENABLE_DOCK_LAYOUT=true
   AUTO_CLEANUP_BREW=true
   ENABLE_TOUCHID_SUDO=true
+  ENABLE_PROFILES=true
+  REMOVE_CONFLICTING_PROFILES=false
 fi
+
+# Where to look for .mobileconfig profiles (config.sh may override PROFILES_DIR).
+PROFILES_DIR="${PROFILES_DIR:-${REPO_DIR}/profiles/mobileconfig}"
 
 # Logging
 LOG_FILE="${HOME}/bootstrap-$(date +%Y%m%d-%H%M%S).log"
@@ -26,6 +34,12 @@ echo
 # Load backup library if available
 if [[ -f "${REPO_DIR}/lib/backup.sh" ]]; then
   source "${REPO_DIR}/lib/backup.sh"
+fi
+
+# Load configuration-profile helpers if available
+if [[ -f "${REPO_DIR}/lib/profiles.sh" ]]; then
+  # shellcheck source=lib/profiles.sh
+  source "${REPO_DIR}/lib/profiles.sh"
 fi
 
 # Pre-bootstrap hook
@@ -196,6 +210,10 @@ else
   echo "ℹ Backup function not available, skipping"
 fi
 
+if [[ "${ENABLE_HOMEBREW:-true}" != "true" ]]; then
+  echo
+  echo "ℹ Homebrew bundle disabled in config — skipping MAS sign-in, brew bundle and cleanup"
+else
 echo
 echo "==> 5) Mac App Store (MAS) sign-in"
 
@@ -239,13 +257,27 @@ if [[ "${AUTO_CLEANUP_BREW:-true}" == "true" ]]; then
   echo "==> 7) Cleanup orphaned Homebrew packages"
   brew bundle cleanup --file "${BREWFILE}" --force || echo "⚠ Cleanup failed (non-critical)"
 fi
+fi  # ENABLE_HOMEBREW
 
-echo
-echo "==> 8) macOS defaults (safe)"
-if [[ -f "${REPO_DIR}/defaults/defaults.safe.sh" ]]; then
-  bash "${REPO_DIR}/defaults/defaults.safe.sh"
+# Remove configuration profiles that would override our defaults (scripts win).
+if [[ "${REMOVE_CONFLICTING_PROFILES:-false}" == "true" ]] \
+   && command -v remove_conflicting_profiles >/dev/null 2>&1; then
+  echo
+  echo "==> 7.5) Remove conflicting configuration profiles"
+  remove_conflicting_profiles
+fi
+
+if [[ "${ENABLE_DEFAULTS_SAFE:-true}" == "true" ]]; then
+  echo
+  echo "==> 8) macOS defaults (safe)"
+  if [[ -f "${REPO_DIR}/defaults/defaults.safe.sh" ]]; then
+    bash "${REPO_DIR}/defaults/defaults.safe.sh"
+  else
+    echo "⚠ defaults.safe.sh not found, skipping"
+  fi
 else
-  echo "⚠ defaults.safe.sh not found, skipping"
+  echo
+  echo "ℹ Safe defaults disabled in config.sh"
 fi
 
 if [[ "${ENABLE_POWER_DEFAULTS:-true}" == "true" ]]; then
@@ -280,6 +312,29 @@ if [[ -f "${REPO_DIR}/defaults/apply.sh" ]]; then
   bash "${REPO_DIR}/defaults/apply.sh"
 else
   echo "⚠ defaults/apply.sh not found, skipping"
+fi
+
+# Install configuration profiles (.mobileconfig). macOS opens each for manual
+# approval — silent install is no longer supported. SELECTED_PROFILES (newline
+# list, set by tui.sh) takes priority; otherwise all profiles in PROFILES_DIR.
+if [[ "${ENABLE_PROFILES:-true}" == "true" ]] \
+   && command -v install_profiles >/dev/null 2>&1; then
+  PROFILE_FILES=()
+  if [[ -n "${SELECTED_PROFILES:-}" ]]; then
+    while IFS= read -r _p; do
+      [[ -n "${_p}" ]] && PROFILE_FILES+=("${_p}")
+    done <<< "${SELECTED_PROFILES}"
+  else
+    while IFS= read -r _p; do
+      [[ -n "${_p}" ]] && PROFILE_FILES+=("${_p}")
+    done <<< "$(discover_profiles "${PROFILES_DIR}")"
+  fi
+
+  if [[ "${#PROFILE_FILES[@]}" -gt 0 ]]; then
+    echo
+    echo "==> 12) Install configuration profiles"
+    install_profiles "${PROFILE_FILES[@]}"
+  fi
 fi
 
 # Post-bootstrap hook
