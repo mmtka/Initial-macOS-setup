@@ -42,6 +42,13 @@ if [[ -f "${REPO_DIR}/lib/profiles.sh" ]]; then
   source "${REPO_DIR}/lib/profiles.sh"
 fi
 
+# Load Mac App Store helpers if available
+if [[ -f "${REPO_DIR}/lib/mas.sh" ]]; then
+  export MAS_REPO_DIR="${REPO_DIR}"
+  # shellcheck source=lib/mas.sh
+  source "${REPO_DIR}/lib/mas.sh"
+fi
+
 # Pre-bootstrap hook
 if [[ -f "${REPO_DIR}/hooks/pre-bootstrap.sh" ]]; then
   echo "==> Running pre-bootstrap hook"
@@ -251,6 +258,14 @@ brew update
 brew bundle --file "${BREWFILE}" --verbose \
   || echo "⚠ Some Brewfile entries failed to install (see output above) — continuing"
 
+# Robust, idempotent App Store install + per-app report (continues on failure).
+if [[ "${MAS_COUNT}" -gt 0 ]] && command -v mas_install_from_brewfile >/dev/null 2>&1; then
+  echo
+  echo "==> 6b) App Store apps (verify & report)"
+  mas_install_from_brewfile "${BREWFILE}" \
+    || echo "⚠ Some App Store apps could not be installed (see summary above)"
+fi
+
 # Auto-cleanup orphaned packages
 if [[ "${AUTO_CLEANUP_BREW:-true}" == "true" ]]; then
   echo
@@ -352,8 +367,8 @@ echo "  ✓ Homebrew packages installed"
 echo "  ✓ macOS defaults configured"
 echo "  ✓ zsh configured"
 if [[ "${MAS_COUNT:-0}" -gt 0 ]]; then
-  echo "  ℹ If any App Store apps are missing, sign into App Store.app and re-run:"
-  echo "      brew bundle --file ${BREWFILE}"
+  echo "  ℹ If any App Store apps are missing, sign into App Store.app and run:"
+  echo "      ./mas-install.sh"
 fi
 if [[ "${CREATE_BACKUP:-true}" == "true" ]] && [[ -d "${BACKUP_DIR:-${HOME}/.macos-setup-backups}" ]]; then
   # Backup dirs are timestamp-named (e.g. 20260119-173000), so ls -t is safe here.
