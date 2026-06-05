@@ -68,10 +68,12 @@ brew "mtr"
 brew "gping"
 brew "cfssl"
 cask "rana-gmbh/netfluss/netfluss"  # showing real-time upload and download speeds across all active adapters
+
 # VPN Bypass start
 tap "geiserx/vpn-bypass"    # Add the tap (first time only)
 cask "vpn-bypass"   # Install VPN Bypass
 # VPN Bypass end
+
 brew "wakeonlan"
 cask "jasine/tap/netmounter"
 
@@ -110,7 +112,12 @@ cask "pearcleaner"
 cask "cleanupbuddy"
 cask "daisydisk"
 brew "mole" # system cleaner
-brew "mac-cleanup-go" # system cleaner
+# brew "mac-cleanup-go" # system cleaner
+
+# Mac-Clean start
+tap "iliyami/macclean"
+cask "mac-clean"
+# Mac-Clean done
 
 # ============================================
 # WORK WITH FILES / TERMINAL / SYNC
@@ -120,9 +127,9 @@ brew "mac-cleanup-go" # system cleaner
 cask "tabby"
 cask "cloudmounter"
 cask "keka"
-cask "nextcloud"
+# cask "nextcloud"
 cask "syncthing"
-cask "nextcloud-vfs"
+cask "nextcloud-vfs" #with Virtual File System
 cask "syncthing-app"
 cask "transmission"
 #soulseek
@@ -137,8 +144,6 @@ cask "magicquit"
 cask "last-window-quits"
 cask "itsycal"  # menu bar calendar
 cask "thaw"     # menu bar management tool; alternative to Bartender and fork from ICE by Jordan Baird
-cask "monuk7735/tap/mew-notch"  # Make the Mac Notch Actually Useful!
-cask "launchie" #Launchpad
 
 # ============================================
 # SECURITY / PRIVACY
@@ -159,8 +164,8 @@ cask "balenaetcher"
 cask "deepl"
 cask "drawio"
 cask "espanso"
-cask "ganttproject"
-cask "openvisualtraceroute"
+#cask "ganttproject"
+#cask "openvisualtraceroute"
 cask "keyclu"   # applications shortcuts Shortcuts owerview via command key
 cask "rsyncui"  # A SwiftUI-based macOS GUI for rsync. 
 
@@ -196,10 +201,11 @@ cask "anki"
 
 # Microsoft Office
 cask "microsoft-auto-update"
-cask "microsoft-office"
-cask "microsoft-word"
-cask "microsoft-excel"
-cask "microsoft-powerpoint"
+#cask "microsoft-office"
+#cask "microsoft-word"
+#cask "microsoft-excel"
+#cask "microsoft-powerpoint"
+cask "microsoft-office-businesspro"
 
 # Mail
 cask "readdle-spark"
@@ -212,12 +218,13 @@ cask "wiso-steuer-2026"
 # DEV TOOLS
 # ============================================
 cask "visual-studio-code" # MS Proprietär
+cask "github"
 #cask "vscodium" #open-source
 cask "wailbrew"
 cask "openinterminal"
 cask "imazing-profile-editor"
-cask "pycharm"
-cask "github"
+#cask "pycharm"
+
 
 # ============================================
 # QUICKLOOK / INSPECTION
