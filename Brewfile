@@ -144,6 +144,7 @@ cask "magicquit"
 cask "last-window-quits"
 cask "itsycal"  # menu bar calendar
 cask "thaw"     # menu bar management tool; alternative to Bartender and fork from ICE by Jordan Baird
+cask "swiftbar" # menu bar — runs shell-script plugins (used by docsync status)
 
 # ============================================
 # SECURITY / PRIVACY
