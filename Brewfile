@@ -230,10 +230,8 @@ cask "imazing-profile-editor"
 # ============================================
 # QUICKLOOK / INSPECTION
 # ============================================
-cask "qlcolorcode"
 cask "apparency"
 cask "suspicious-package"
-cask "glance-chamburr"  # All-in-one Quick Look plugin
 
 # ============================================
 # TeX
